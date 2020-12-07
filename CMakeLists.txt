@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(Exam Autumn 2020)
+project(Exam-2020)
 
 find_package(OpenGL REQUIRED)
 
