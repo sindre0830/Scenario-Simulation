@@ -16,7 +16,6 @@ add_executable(${PROJECT_NAME}
 	main.cpp				header/dictionary.h
 	functionality.cpp		header/functionality.h
 	camera.cpp				header/camera.h
-	class/skybox.cpp		class/header/skybox.h		class/shader/skybox.h
 	class/terrain.cpp		class/header/terrain.h		class/shader/terrain.h
 )
 

@@ -9,7 +9,6 @@
 #include "dictionary.h"
 #include "camera.h"
 #include "functionality.h"
-#include "class/header/skybox.h"
 #include "class/header/terrain.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -65,6 +64,8 @@ int main() {
 	//enable transparency on texture    //Might not need!!!
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//set background color to cyan (sky color)
+	glClearColor(0.7f, 1.0f, 1.0f, 1.0f);
 	//load textures to be used in gameloop
 	GLuint terrainTex = loadTexture("HeightMaps/Gjovik_Height MapLow.png", TERRAIN_TEXTURE);
 	//construct terrain class
