@@ -10,6 +10,10 @@
 #include <iostream>
 /* global data */
 extern Camera *g_camera;
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+	g_camera->updateDirection(xpos, ypos);
+}
 /**
  * @brief Generate VAO for rectangles.
  * 

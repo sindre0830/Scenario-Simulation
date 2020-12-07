@@ -40,6 +40,8 @@ int main() {
 	GLFWwindow* window = glfwCreateWindow(1024, 1024, "Landscape", nullptr, nullptr);
 	//setting the OpenGL context to the window
 	glfwMakeContextCurrent(window);
+	//enable capture of cursor and focus it on the middle while hiding the icon
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	//branch if window isn't created and kill the application
 	if(window == nullptr) {
 		std::cerr << "GLFW failed on window creation.\n";
@@ -56,6 +58,8 @@ int main() {
 	}
 	//eanable capture of debug output
 	enableDebug();
+	//get initial cursor position
+	glfwSetCursorPosCallback(window, mouse_callback);
 	//enable MSAA
 	glEnable(GL_MULTISAMPLE);
 	//enable transparency on texture    //Might not need!!!
@@ -75,6 +79,8 @@ int main() {
 		nowTime = glfwGetTime();
 		deltaTime += (nowTime - lastTime) / limitFPS;
 		lastTime = nowTime;
+		//move camera
+		g_camera->updatePosition(window, deltaTime);
 		//processes all pending events
 		glfwPollEvents();
 		//for every frame reset background color buffer and depth buffer

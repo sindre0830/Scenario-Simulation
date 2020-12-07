@@ -10,12 +10,16 @@ static const std::string terrainVertexShader = R"(
 	layout(location = 1) in vec2 a_texPos;
     /* output */
 	out vec2 vs_texPos;
+    /* uniform */
+    uniform mat4 u_modelMatrix = mat4(1);
+    uniform mat4 u_viewMatrix = mat4(1);
+    uniform mat4 u_projectionMatrix = mat4(1);
     /**
      * Main vertex shader program.
      */
 	void main() {
 		vs_texPos = a_texPos;
-		gl_Position = vec4(a_gridPos, 0.f, 1.f);
+		gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * vec4(a_gridPos, 0.f, 1.f);
 	}
 )";
 //fragment shader
