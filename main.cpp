@@ -69,6 +69,8 @@ int main() {
 	//enable transparency on texture    //Might not need!!!
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//enable depth
+	glEnable(GL_DEPTH_TEST);
 	//set background color to cyan (sky color)
 	glClearColor(0.7f, 1.0f, 1.0f, 1.0f);
 	//load textures to be used in gameloop
