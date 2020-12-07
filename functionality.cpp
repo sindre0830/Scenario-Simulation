@@ -279,6 +279,38 @@ void destroyVAO(GLuint &VAO) {
 	glDeleteVertexArrays(1, &VAO);
 }
 /**
+ * @brief Resize frame to keep aspect ratio.
+ * 
+ * @param window 
+ * @param width 
+ * @param height 
+ */
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    //set difference values
+	int widthDifference = width - 1024;
+	int heightDifference = height - 1024;
+    //set scene size and position according to width and height difference
+	if(widthDifference > 0 && heightDifference > 0) {
+		glViewport((widthDifference / 2) - (heightDifference / 2), 0, (width - widthDifference) + heightDifference, height);
+	} else if(widthDifference < 0 && heightDifference < 0) {
+		glViewport(-(heightDifference / 2), -(widthDifference / 2), (width + heightDifference), (height + widthDifference)); //wrong
+	} else if(widthDifference > 0 && heightDifference < 0) {
+		glViewport((widthDifference / 2) - (heightDifference / 2), 0, (width - widthDifference) + heightDifference, height);
+	} else if(widthDifference < 0 && heightDifference > 0) {
+		glViewport(0, -(widthDifference / 2) + (heightDifference / 2), width, (height + widthDifference) - heightDifference);
+	} else {
+		if(widthDifference > 0) {
+			glViewport((widthDifference / 2), 0, (width - widthDifference), height);
+		} else if(widthDifference < 0) {
+			glViewport(0, -(widthDifference / 2), width, (height + widthDifference));
+		} else if(heightDifference > 0) {
+			glViewport(0, (heightDifference / 2), width, (height - heightDifference));
+		} else if(heightDifference < 0) {
+			glViewport(-(heightDifference / 2), 0, (width + heightDifference), height);
+		}
+	}
+}
+/**
  * @brief Eanable capture of debug output.
  * 
  */

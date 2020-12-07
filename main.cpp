@@ -37,6 +37,11 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	//create window
 	GLFWwindow* window = glfwCreateWindow(1024, 1024, "Landscape", nullptr, nullptr);
+	//set framebuffer size data
+	int framebufferWidth = 0, framebufferHeight = 0;
+	glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+	//declare framebuffer size callback
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	//setting the OpenGL context to the window
 	glfwMakeContextCurrent(window);
 	//enable capture of cursor and focus it on the middle while hiding the icon

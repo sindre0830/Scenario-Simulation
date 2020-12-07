@@ -15,6 +15,7 @@ GLuint loadModel(const std::string path, const std::string file, int &size);
 GLuint loadTexture(const std::string &filepath, const GLuint slot);
 GLuint createVAO(const std::vector<GLfloat> &arr, const std::vector<GLuint> &arr_indices);
 void destroyVAO(GLuint &VAO);
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void enableDebug();
 void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 #endif
