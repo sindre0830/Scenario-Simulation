@@ -8,12 +8,28 @@
 #include <stb_image.h>
 #include <tiny_obj_loader.h>
 #include <set>
+#include <random>
 #include <iostream>
+#include <algorithm>
 /* global data */
 extern Camera *g_camera;
 extern MapData* g_mapData;
-//std::vector<std::vector<int>> pixelDepth;
-//std::map<std::pair<int, int>, std::vector<std::vector<float>>> gridElement;
+/**
+ * @brief Generate random integer between two numbers.
+ * 
+ * @param min 
+ * @param max 
+ * @return int 
+ */
+int randomIndex(const int min, const int max) {
+	//initialise (seed) engine
+	std::random_device rd;
+	//send seed to random-number engine (Mersenne-Twister)
+	std::mt19937 rng(rd());
+	//ubiased integer between 0 and array size
+	std::uniform_int_distribution<int> uni(min, max);
+	return uni(rng);
+}
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	g_camera->updateDirection(xpos, ypos);

@@ -109,6 +109,7 @@ int main() {
 		terrain.draw();
 		vegetation.draw();
 		entity.draw();
+		if(deltaTime >= 1.f) entity.mov();
 
         //reset delta time 
 		if(deltaTime >= 1.f) deltaTime -= 1.f;

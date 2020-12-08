@@ -7,6 +7,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 /* functionality */
+int randomIndex(const int min, const int max);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 GLuint genObject(const std::vector<GLfloat> &arr, const int size);
 std::vector<GLuint> genIndices(const int size);
