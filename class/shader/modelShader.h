@@ -15,18 +15,21 @@ static const std::string modelVertexShader = R"(
     uniform mat4 u_modelMatrix = mat4(1);
     uniform mat4 u_viewMatrix = mat4(1);
     uniform mat4 u_projectionMatrix = mat4(1);
+	uniform vec3 offsets[600];
     /**
      * Main vertex shader program.
      */
 	void main() {
+    	vec3 offset = offsets[gl_InstanceID];
+
 		//We need these in a different shader later down the pipeline, so we need to send them along. Can't just call in a_Position unfortunately.
-		vs_fragPos = vec4(a_gridPos, 1.f);
+		vs_fragPos = vec4(a_gridPos + offset, 1.f);
 		//Find the correct values for our normals given that we move our object around in the world and the normals change quite a bit.
 		mat3 normalMatrix = transpose(inverse(mat3(u_viewMatrix * u_modelMatrix)));
 		//Then normalize those new values so we do not accidentally go above length = 1. Also normalize the normals themselves beforehand, just to be sure calculations are accurate.
 		vs_normal = normalize(normalMatrix * normalize(a_normal));
 		
-        gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * vec4(a_gridPos, 1.f);
+        gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * vec4(a_gridPos + offset, 1.f);
 
 	}
 )";

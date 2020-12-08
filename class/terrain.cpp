@@ -108,7 +108,7 @@ Terrain::Terrain() {
  * 
  */
 void Terrain::draw() {
-    glm::vec3 lightDirection(sin(glfwGetTime()), -0.5f, cos(glfwGetTime()));
+    glm::vec3 lightDirection(sin(glfwGetTime()), 3.f, cos(glfwGetTime()));
 
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);

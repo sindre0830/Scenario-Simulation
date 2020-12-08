@@ -10,7 +10,7 @@
  */
 struct MapData {
     /* data */
-    int gridWidth = 100, gridHeight = 100;
+    int gridWidth = 200, gridHeight = 200;
     std::map<std::pair<int, int>, std::vector<std::vector<float>>> gridElement;
 };
 #endif
