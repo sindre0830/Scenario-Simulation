@@ -46,7 +46,7 @@ static const std::string terrainFragmentShader = R"(
 	uniform vec3 u_lightColor = vec3(1.f);
 	uniform vec3 u_lightPos = vec3(1.f);
 	uniform vec3 u_lightDirection = vec3(2.f, 1.f, 1.f);  
-	uniform float u_specularity = 1.f;
+	uniform float u_specularity = 0.5f;
     /**
 	 * @brief Get directional light
 	 * 
