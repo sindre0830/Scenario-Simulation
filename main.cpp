@@ -11,6 +11,8 @@
 #include "mapData.h"
 #include "functionality.h"
 #include "class/header/terrain.h"
+#include "class/header/vegetation.h"
+#include "class/header/entity.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -83,6 +85,10 @@ int main() {
 	GLuint waterTex = loadTexture("NormalMapping/NormalMapping_Water.png", WATER_TEXTURE);
 	//construct terrain class
 	Terrain terrain;
+	//construct vegetation class
+	Vegetation vegetation;
+	//construct entity class
+	Entity entity;
     //setup timer
 	static double limitFPS = 1.f / 60.f;
 	double lastTime = glfwGetTime(), nowTime = 0, timer = lastTime, deltaTime = 0.f;
@@ -101,6 +107,8 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
 		terrain.draw();
+		vegetation.draw();
+		entity.draw();
 
         //reset delta time 
 		if(deltaTime >= 1.f) deltaTime -= 1.f;

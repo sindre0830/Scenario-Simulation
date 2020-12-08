@@ -67,7 +67,7 @@ Terrain::Terrain() {
         pixelIndexRow = 0;
         if(pixelIndexCol + 1 < 541) pixelIndexCol++;
     }*/
-    std::cout << meshAmount << std::endl;
+    //std::cout << meshAmount << std::endl;
     VAO = genObject(arr, meshAmount);
     //specify the layout of the vertex data
     glEnableVertexAttribArray(0);
@@ -81,7 +81,7 @@ Terrain::Terrain() {
     //rotate world
     glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(-1.f, 0.f, 0.f));
     //modelMatrix = glm::rotate(modelMatrix, glm::radians(90.f), glm::vec3(0.f, 0.f, 1.f));
-    //modelMatrix = glm::scale(modelMatrix, glm::vec3(2.f));
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(2.f));
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_modelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
     glUseProgram(0);
 

@@ -18,6 +18,8 @@ add_executable(${PROJECT_NAME}
 	functionality.cpp		header/functionality.h
 	camera.cpp				header/camera.h
 	class/terrain.cpp		class/header/terrain.h		class/shader/terrain.h
+	class/vegetation.cpp	class/header/vegetation.h	class/shader/modelShader.h
+	class/entity.cpp		class/header/entity.h
 	class/lightCycle.cpp	class/header/lightCycle.h
 )
 
