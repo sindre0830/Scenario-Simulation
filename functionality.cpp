@@ -255,6 +255,23 @@ GLuint loadHeightMap(const std::string& filepath, const GLuint slot) {
             size_t index = RGBA * (i * width + j);
             color = static_cast<int>(pixels[index]);
             arr.push_back(color);
+            if(color < 40) {
+                pixels[index + 0] = 255;
+                pixels[index + 1] = 208;
+                pixels[index + 2] = 89;
+            } else if(color < 60) {
+                pixels[index + 0] = 35;
+                pixels[index + 1] = 145;
+                pixels[index + 2] = 20;
+            } else if(color < 100) {
+                pixels[index + 0] = 158;
+                pixels[index + 1] = 158;
+                pixels[index + 2] = 158;
+            } else {
+                pixels[index + 0] = 227;
+                pixels[index + 1] = 227;
+                pixels[index + 2] = 227;
+            }
         }
         pixelDepth.push_back(arr);
     }
