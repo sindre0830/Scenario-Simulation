@@ -6,7 +6,7 @@
 static const std::string terrainVertexShader = R"(
 	#version 430 core
     /* input */
-	layout(location = 0) in vec2 a_gridPos;
+	layout(location = 0) in vec3 a_gridPos;
 	layout(location = 1) in vec2 a_texPos;
     /* output */
 	out vec2 vs_texPos;
@@ -19,7 +19,7 @@ static const std::string terrainVertexShader = R"(
      */
 	void main() {
 		vs_texPos = a_texPos;
-		gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * vec4(a_gridPos, 0.f, 1.f);
+		gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * vec4(a_gridPos, 1.f);
 	}
 )";
 //fragment shader

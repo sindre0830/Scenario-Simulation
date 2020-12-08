@@ -14,6 +14,7 @@ add_subdirectory(external/glm-0.9.9.8)
 
 add_executable(${PROJECT_NAME}
 	main.cpp				header/dictionary.h
+							header/mapData.h
 	functionality.cpp		header/functionality.h
 	camera.cpp				header/camera.h
 	class/terrain.cpp		class/header/terrain.h		class/shader/terrain.h

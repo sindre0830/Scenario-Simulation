@@ -8,6 +8,7 @@
 /* library */
 #include "dictionary.h"
 #include "camera.h"
+#include "mapData.h"
 #include "functionality.h"
 #include "class/header/terrain.h"
 #include <GL/glew.h>
@@ -15,10 +16,14 @@
 #include <iostream>
 /* global data */
 Camera* g_camera;
+MapData* g_mapData;
 /**
  * Main program.
  */
 int main() {
+	//construct mapData class and point adress to global pointer
+	static MapData mapData;
+	g_mapData = &mapData;
 	//construct camera class and point adress to global pointer
 	static Camera camera(1024, 1024);
 	g_camera = &camera;
@@ -74,7 +79,7 @@ int main() {
 	//set background color to cyan (sky color)
 	glClearColor(0.7f, 1.0f, 1.0f, 1.0f);
 	//load textures to be used in gameloop
-	GLuint terrainTex = loadTexture("HeightMaps/Gjovik_Height MapLow.png", TERRAIN_TEXTURE);
+	GLuint terrainTex = loadHeightMap("HeightMaps/Gjovik_Height MapLow.png", TERRAIN_TEXTURE);
 	//construct terrain class
 	Terrain terrain;
     //setup timer

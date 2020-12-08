@@ -1,6 +1,7 @@
 /* library */
 #include "functionality.h"
 #include "camera.h"
+#include "mapData.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/matrix_transform_2d.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -10,6 +11,9 @@
 #include <iostream>
 /* global data */
 extern Camera *g_camera;
+extern MapData* g_mapData;
+//std::vector<std::vector<int>> pixelDepth;
+//std::map<std::pair<int, int>, std::vector<std::vector<float>>> gridElement;
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	g_camera->updateDirection(xpos, ypos);
@@ -199,6 +203,106 @@ GLuint loadTexture(const std::string& filepath, const GLuint slot) {
 	//load pixel data from a stored image
     int width, height, bpp;
     auto pixels = stbi_load(filepath.c_str(), &width, &height, &bpp, STBI_rgb_alpha);
+    //generate the texture, activate it and bind it
+	GLuint tex{};
+    glGenTextures(1, &tex);
+    glActiveTexture(GL_TEXTURE0 + slot);
+    glBindTexture(GL_TEXTURE_2D, tex);
+    //set texture parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//transfer the image data to the texture in GPU
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+	//generate different resolutions for distance
+	glGenerateMipmap(GL_TEXTURE_2D);
+    //free the memory returned by STBI
+    if(pixels) stbi_image_free(pixels);
+    return tex;
+}
+/**
+ * @brief Loads heightmap from filepath.
+ * 
+ * @param filepath
+ * @param slot
+ * @return GLuint
+ */
+GLuint loadHeightMap(const std::string& filepath, const GLuint slot) {
+	//flip image
+	stbi_set_flip_vertically_on_load(true);
+	//load pixel data from a stored image
+    int width, height, bpp;
+    auto pixels = stbi_load(filepath.c_str(), &width, &height, &bpp, STBI_rgb_alpha);
+    
+
+    const size_t RGBA = 4;
+    /*int x = 3;
+    int y = 4;
+    size_t index = RGBA * (y * width + x);
+    std::cout << "RGBA pixel @ (x=3, y=4): " 
+              << static_cast<int>(pixels[index + 0]) << " "
+              << static_cast<int>(pixels[index + 1]) << " "
+              << static_cast<int>(pixels[index + 2]) << " "
+              << static_cast<int>(pixels[index + 3]) << '\n';*/
+
+    //get pixel color
+    GLuint color;
+    std::vector<std::vector<int>> pixelDepth;
+    for(int i = 0; i <= height - 1; i++) {
+        std::vector<int> arr;
+        for(int j = 0; j <= width - 1; j++) {
+            size_t index = RGBA * (i * width + j);
+            color = static_cast<int>(pixels[index]);
+            arr.push_back(color);
+        }
+        pixelDepth.push_back(arr);
+    }
+    //std::reverse(pixelDepth.begin(), pixelDepth.end());
+    //std::cout << pixelDepth[0].size() << std::endl;
+
+    int gridWidth = 300, gridHeight = 300;
+    //set element value
+    float gridElementWidth = 1.f / ((float)(gridWidth) / 2.f);
+    float gridElementHeight = 1.f / ((float)(gridHeight) / 2.f);
+    float textureElementWidth = gridElementWidth * 2.f;
+    float textureElementHeight = gridElementHeight * 2.f;
+    int mapElementWidth = width / gridWidth;
+    int mapElementHeight = height / gridHeight;
+    //fills in map based on column and row (key) with a 2D vector of each corner coordinate (value)
+    float
+        xPos = -1.f,
+        yPos = -1.f,
+        xTex = 0.f,
+        yTex = 0.f;
+    int
+        rowPixel = 0,
+        colPixel = 0;
+    for(int i = 0; i < gridHeight; i++, xPos = -1.f, xTex = 0.f, rowPixel = 0, yPos += gridElementHeight, yTex += textureElementHeight, colPixel += mapElementHeight) {
+        for(int j = 0; j < gridWidth; j++, xPos += gridElementWidth, xTex += textureElementWidth, rowPixel += mapElementWidth) {
+            //top left
+            g_mapData->gridElement[std::make_pair(i, j)].push_back({
+                xPos, yPos + gridElementHeight, (float)(pixelDepth[colPixel + mapElementHeight][rowPixel]) / 100.f,
+                xTex, yTex + textureElementHeight
+            });
+            //bottom left
+            g_mapData->gridElement[std::make_pair(i, j)].push_back({
+                xPos, yPos, (float)(pixelDepth[colPixel][rowPixel]) / 100.f,
+                xTex, yTex
+            });
+            //bottom right
+            g_mapData->gridElement[std::make_pair(i, j)].push_back({
+                xPos + gridElementWidth, yPos, (float)(pixelDepth[colPixel][rowPixel + mapElementWidth]) / 100.f,
+                xTex + textureElementWidth, yTex
+            });
+            //top right
+            g_mapData->gridElement[std::make_pair(i, j)].push_back({
+                xPos + gridElementWidth, yPos + gridElementHeight, (float)(pixelDepth[colPixel + mapElementHeight][rowPixel + mapElementWidth]) / 100.f,
+                xTex + textureElementWidth, yTex + textureElementHeight
+            });
+        }
+    }
+
     //generate the texture, activate it and bind it
 	GLuint tex{};
     glGenTextures(1, &tex);

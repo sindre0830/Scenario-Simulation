@@ -15,7 +15,7 @@ Camera::~Camera() {}
  */
 Camera::Camera(const int width, const int height) {
 	//set projection matrix
-	projectionMatrix = glm::perspective(glm::radians(60.f), static_cast<float>(width) / height, 0.1f, 1000.f);
+	projectionMatrix = glm::perspective(glm::radians(60.f), static_cast<float>(width) / height, 0.01f, 1000.f);
     //set initial view matrix values
 	camPos = glm::vec3(0.f, 2.f, 0.f);
 	camFront = glm::vec3(0.f, 0.f, -1.f);

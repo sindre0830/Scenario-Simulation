@@ -13,6 +13,7 @@ class Terrain {
         /* private data */
         GLuint shaderProgram = 0;
         GLuint VAO = 0;
+        int meshAmount = 0;
         /* private functionality */
         std::vector<GLfloat> genCoordinates();
     public:

@@ -13,6 +13,7 @@ std::vector<GLuint> genIndices(const int size);
 GLuint compileShader(const std::string &vertexShaderSrc, const std::string &fragmentShaderSrc);
 GLuint loadModel(const std::string path, const std::string file, int &size);
 GLuint loadTexture(const std::string &filepath, const GLuint slot);
+GLuint loadHeightMap(const std::string &filepath, const GLuint slot);
 GLuint createVAO(const std::vector<GLfloat> &arr, const std::vector<GLuint> &arr_indices);
 void destroyVAO(GLuint &VAO);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
