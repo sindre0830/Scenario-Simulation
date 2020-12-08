@@ -88,7 +88,7 @@ int main() {
 	//construct vegetation class
 	Vegetation vegetation;
 	//construct entity class
-	//Entity entity;
+	Entity entity;
     //setup timer
 	static double limitFPS = 1.f / 60.f;
 	double lastTime = glfwGetTime(), nowTime = 0, timer = lastTime, deltaTime = 0.f;
@@ -108,7 +108,7 @@ int main() {
         
 		terrain.draw();
 		vegetation.draw();
-		//entity.draw();
+		entity.draw();
 
         //reset delta time 
 		if(deltaTime >= 1.f) deltaTime -= 1.f;

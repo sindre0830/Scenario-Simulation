@@ -133,19 +133,19 @@ std::vector<GLfloat> Terrain::genCoordinates() {
         //top left grid, texture and normal coordinates
         -1.f, 1.f, 30.f / 255.f,
         0.f, 1.f,
-        1.f, 1.f, 1.f,
+        0.f, 0.f, 0.f,
         //bottom left grid, texture and normal coordinates
         -1.f, -1.f, 30.f / 255.f,
         0.f, 0.f,
-        1.f, 1.f, 1.f,
+        0.f, 0.f, 0.f,
         //bottom right grid, texture and normal coordinates
         1.f, -1.f, 30.f / 255.f,
         1.f, 0.f,
-        1.f, 1.f, 1.f,
+        0.f, 0.f, 0.f,
         //top right grid, texture and normal coordinates
         1.f, 1.f, 30.f / 255.f,
         1.f, 1.f,
-        1.f, 1.f, 1.f
+        0.f, 0.f, 0.f
     };
     return arr;
 }

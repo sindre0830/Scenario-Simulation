@@ -47,16 +47,16 @@ Vegetation::Vegetation() {
                 }*/
                 //arrTest.push_back(arrTestBuffer);
                 glm::vec3 translation;
-                //i have to multiply the value by 100 to compensate for the tree scaling(0.01f), then multiply by 2 because of the terrain scalling(2.f)
+                //multiply the value by 100 to compensate for the tree scaling(0.01f * 100.f = 1), then multiply by 2 because of the terrain scalling
                 translation.x = g_mapData->gridElement[std::make_pair(i, j)][0][0] * (100.f * 2.f);
                 translation.y = g_mapData->gridElement[std::make_pair(i, j)][0][1] * (100.f * 2.f);
                 translation.z = g_mapData->gridElement[std::make_pair(i, j)][0][2] * (100.f * 2.f);
-                if(index < 600) translations[index] = translation;
+                translations[index] = translation;
                 index++;
             }
         }
     }
-    std::cout << index << std::endl;
+    //std::cout << index << std::endl;
 
     /*glm::vec3 translation;
     translation.x = g_mapData->gridElement[std::make_pair(0, 0)][0][0] * 200.f;
