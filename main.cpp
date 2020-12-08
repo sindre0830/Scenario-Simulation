@@ -80,6 +80,7 @@ int main() {
 	glClearColor(0.7f, 1.0f, 1.0f, 1.0f);
 	//load textures to be used in gameloop
 	GLuint terrainTex = loadHeightMap("HeightMaps/Gjovik_Height MapLow.png", TERRAIN_TEXTURE);
+	GLuint waterTex = loadTexture("NormalMapping/NormalMapping_Water.png", WATER_TEXTURE);
 	//construct terrain class
 	Terrain terrain;
     //setup timer

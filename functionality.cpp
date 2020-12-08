@@ -248,18 +248,18 @@ GLuint loadHeightMap(const std::string& filepath, const GLuint slot) {
 
     //get pixel color
     GLuint color;
-    std::vector<std::vector<int>> pixelDepth;
+    std::vector<std::vector<float>> pixelDepth;
     for(int i = 0; i <= height - 1; i++) {
-        std::vector<int> arr;
+        std::vector<float> arr;
         for(int j = 0; j <= width - 1; j++) {
             size_t index = RGBA * (i * width + j);
-            color = static_cast<int>(pixels[index]);
-            arr.push_back(color);
-            if(color < 40) {
+            color = (static_cast<float>(pixels[index]) + static_cast<float>(pixels[index + 1]) + static_cast<float>(pixels[index + 2])) / 3.f;
+            arr.push_back(color / 255.f);
+            if(color < 30) {
                 pixels[index + 0] = 255;
                 pixels[index + 1] = 208;
                 pixels[index + 2] = 89;
-            } else if(color < 60) {
+            } else if(color < 80) {
                 pixels[index + 0] = 35;
                 pixels[index + 1] = 145;
                 pixels[index + 2] = 20;
@@ -273,17 +273,18 @@ GLuint loadHeightMap(const std::string& filepath, const GLuint slot) {
                 pixels[index + 2] = 227;
             }
         }
+        //std::reverse(arr.begin(), arr.end());
         pixelDepth.push_back(arr);
     }
     //std::reverse(pixelDepth.begin(), pixelDepth.end());
     //std::cout << pixelDepth[0].size() << std::endl;
 
-    int gridWidth = 300, gridHeight = 300;
+    int gridWidth = 200, gridHeight = 200;
     //set element value
-    float gridElementWidth = 1.f / ((float)(gridWidth) / 2.f);
-    float gridElementHeight = 1.f / ((float)(gridHeight) / 2.f);
-    float textureElementWidth = gridElementWidth * 2.f;
-    float textureElementHeight = gridElementHeight * 2.f;
+    float gridElementWidth = 1.f / 100.f;
+    float gridElementHeight = 1.f / 100.f;
+    float textureElementWidth = gridElementWidth / 2.f;
+    float textureElementHeight = gridElementHeight / 2.f;
     int mapElementWidth = width / gridWidth;
     int mapElementHeight = height / gridHeight;
     //fills in map based on column and row (key) with a 2D vector of each corner coordinate (value)
@@ -306,38 +307,37 @@ GLuint loadHeightMap(const std::string& filepath, const GLuint slot) {
                 indexL = 0;
             } else indexL = rowPixel + mapElementWidth;
 
-            if(rowPixel + mapElementHeight > height) {
+            if(colPixel + mapElementHeight > height) {
                 indexU = 0;
-            } else indexU = rowPixel + mapElementHeight;
+            } else indexU = colPixel + mapElementHeight;
             
-            if(rowPixel - mapElementHeight < 0) {
+            if(colPixel - mapElementHeight < 0) {
                 indexD = 0;
-            } else indexD = rowPixel - mapElementHeight;
+            } else indexD = colPixel - mapElementHeight;
 
-            glm::vec3 normalVector = glm::normalize(glm::vec3((float)(pixelDepth[colPixel][indexR]) / 100.f - (float)(pixelDepth[colPixel][indexL]) / 100.f, 2.0f, (float)(pixelDepth[indexU][rowPixel]) / 100.f - (float)(pixelDepth[indexD][rowPixel]) / 100.f));
+            glm::vec3 normalVector = glm::normalize(glm::vec3(pixelDepth[colPixel][indexR] - pixelDepth[colPixel][indexL], 2.0f, pixelDepth[indexU][rowPixel] - pixelDepth[indexD][rowPixel]));
             
-            //std::cout << normalVector.x << ' ' << normalVector.y << ' ' << normalVector.z << std::endl;
             //top left
             g_mapData->gridElement[std::make_pair(i, j)].push_back({
-                xPos, yPos + gridElementHeight, (float)(pixelDepth[colPixel + mapElementHeight][rowPixel]) / 100.f,
+                xPos, yPos + gridElementHeight, pixelDepth[indexU][rowPixel] * 2.f,
                 xTex, yTex + textureElementHeight,
                 normalVector.x, normalVector.y, normalVector.z
             });
             //bottom left
             g_mapData->gridElement[std::make_pair(i, j)].push_back({
-                xPos, yPos, (float)(pixelDepth[colPixel][rowPixel]) / 100.f,
+                xPos, yPos, pixelDepth[colPixel][rowPixel] * 2.f,
                 xTex, yTex,
                 normalVector.x, normalVector.y, normalVector.z
             });
             //bottom right
             g_mapData->gridElement[std::make_pair(i, j)].push_back({
-                xPos + gridElementWidth, yPos, (float)(pixelDepth[colPixel][rowPixel + mapElementWidth]) / 100.f,
+                xPos + gridElementWidth, yPos, pixelDepth[colPixel][indexL] * 2.f,
                 xTex + textureElementWidth, yTex,
                 normalVector.x, normalVector.y, normalVector.z
             });
             //top right
             g_mapData->gridElement[std::make_pair(i, j)].push_back({
-                xPos + gridElementWidth, yPos + gridElementHeight, (float)(pixelDepth[colPixel + mapElementHeight][rowPixel + mapElementWidth]) / 100.f,
+                xPos + gridElementWidth, yPos + gridElementHeight, pixelDepth[indexU][indexL] * 2.f,
                 xTex + textureElementWidth, yTex + textureElementHeight,
                 normalVector.x, normalVector.y, normalVector.z
             });

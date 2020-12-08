@@ -1,5 +1,5 @@
 #ifndef __DICTIONARY_H_
 #define __DICTIONARY_H_
 /* dictionary */
-enum Sprite {TERRAIN_TEXTURE};
+enum Sprite {TERRAIN_TEXTURE, WATER_TEXTURE};
 #endif
