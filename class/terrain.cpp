@@ -34,7 +34,7 @@ Terrain::Terrain() {
     for(int i = 0; i < gridHeight; i++) {
         for(int j = 0; j < gridWidth; j++) {
             for(int k = 0; k < 4; k++) {
-                for(int n = 0; n < 5; n++) {
+                for(int n = 0; n < 8; n++) {
                     arr.push_back(g_mapData->gridElement[std::make_pair(i, j)][k][n]);
                 }
                 meshAmount++;
@@ -69,15 +69,17 @@ Terrain::Terrain() {
     VAO = genObject(arr, meshAmount);
     //specify the layout of the vertex data
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (const void*)(0));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (const void*)(0));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (const void*)(3 * sizeof(GLfloat)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (const void*)(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (const void*)(5 * sizeof(GLfloat)));
     //set projection matrix uniform
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_projectionMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->projectionMatrix));
     //rotate world
     glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(1.f, 0.f, 0.f));
     //modelMatrix = glm::rotate(modelMatrix, glm::radians(90.f), glm::vec3(0.f, 0.f, 1.f));
-    //modelMatrix = glm::scale(modelMatrix, glm::vec3(10.f));
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(10.f));
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_modelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
     glUseProgram(0);
 }
@@ -88,6 +90,9 @@ Terrain::Terrain() {
 void Terrain::draw() {
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
+    //dynamic light direction
+    glm::vec3 lightDirection(sin(glfwGetTime()), -0.5f, cos(glfwGetTime()));
+    //glUniform3fv(glGetUniformLocation(shaderProgram, "u_lightDirection"), 1, glm::value_ptr(lightDirection));
     glUniform1i(glGetUniformLocation(shaderProgram, "u_texture"), TERRAIN_TEXTURE);
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_viewMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->viewMatrix));
     glDrawElements(GL_TRIANGLES, (6 * meshAmount), GL_UNSIGNED_INT, (const void*)0);

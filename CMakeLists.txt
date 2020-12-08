@@ -18,6 +18,7 @@ add_executable(${PROJECT_NAME}
 	functionality.cpp		header/functionality.h
 	camera.cpp				header/camera.h
 	class/terrain.cpp		class/header/terrain.h		class/shader/terrain.h
+	class/lightCycle.cpp	class/header/lightCycle.h
 )
 
 target_include_directories(
