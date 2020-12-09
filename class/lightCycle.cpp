@@ -25,23 +25,17 @@ void LightCycle::update() {
         g_mapData->lightDirection = glm::vec3(1.04f, 1.f, 0.f);
     } else g_mapData->lightDirection = glm::vec3(((float)(hour) / 24.f) * hour, 1.f, 0.f);
     //set color to the background according to the time
-    if(hour <= 5) {
+    if(hour <= 6) {
         //set night color
-        g_mapData->skyColor = glm::vec3(0.01f, 0.01f, 0.14f);
-        g_mapData->lightColor = glm::vec3(1.f, 1.f, 1.f);
-    } else if(hour <= 7) {
-        //set mild night color
-        g_mapData->skyColor = glm::vec3(0.01f, 0.01f, 0.44f);
-        g_mapData->lightColor = glm::vec3(1.f, 0.9f, 0.65f);
+        g_mapData->lightColor = glm::vec3(0.5f, 0.5f, 0.5f);
     } else if(hour <= 10) {
-        //set morning/evening color
-        g_mapData->skyColor = glm::vec3(0.f, 0.75f, 1.f);
+        //set dusk/dawn color
         g_mapData->lightColor = glm::vec3(1.f, 0.9f, 0.65f);
     } else {
         //set day color
-        g_mapData->skyColor = glm::vec3(0.7f, 1.0f, 1.0f);
         g_mapData->lightColor = glm::vec3(1.f, 1.f, 1.f);
     }
+    g_mapData->skyColor = glm::vec3(0.01f, 0.01f, (float)(hour) / 12.f);
     //either increment or decrement according to cycle
     if(increment) {
         hour++;
