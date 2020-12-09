@@ -60,12 +60,6 @@ Entity::Entity() {
             }
         }
     }
-    //fill in random paths
-    std::vector<int> filler(aerialInstanceIndex, 0);
-    for(int i = 0; i < aerialInstanceIndex; i++) {
-        filler[i] = randomIndex(0, 3);
-    }
-    aerialLastDirection = filler;
     //send initial position to uniform
     for(unsigned int i = 0; i < aerialInstanceIndex; i++) {
         std::string buffer = "offsets[" + std::to_string(i) + "]";
@@ -104,12 +98,6 @@ Entity::Entity() {
             }
         }
     }
-    //fill in random paths
-    filler = std::vector<int>(groundInstanceIndex, 0);
-    for(int i = 0; i < groundInstanceIndex; i++) {
-        filler[i] = randomIndex(0, 3);
-    }
-    groundLastDirection = filler;
     //send initial position to uniform
     for(unsigned int i = 0; i < groundInstanceIndex; i++) {
         std::string buffer = "offsets[" + std::to_string(i) + "]";
@@ -117,6 +105,8 @@ Entity::Entity() {
         glUniform3fv(glGetUniformLocation(groundShaderProgram, uniformLoc), 1, glm::value_ptr(groundInstancePos[i]));
     }
     glUseProgram(0);
+    //set initial direction to -1 forcing random path finding
+    randomizePathing();
 }
 
 void Entity::draw() {
@@ -269,4 +259,19 @@ int Entity::getRandomPath(const bool pathNorth, const bool pathWest, const bool 
     //branch if there are no possible paths (this will pause the entity)
     } else direction = -1;
     return direction;
+}
+
+void Entity::randomizePathing() {
+    //force randomization by setting value to -1
+    std::vector<int> filler(aerialInstanceIndex, 0);
+    for(int i = 0; i < aerialInstanceIndex; i++) {
+        filler[i] = -1;
+    }
+    aerialLastDirection = filler;
+
+    filler = std::vector<int>(groundInstanceIndex, 0);
+    for(int i = 0; i < groundInstanceIndex; i++) {
+        filler[i] = -1;
+    }
+    groundLastDirection = filler;
 }

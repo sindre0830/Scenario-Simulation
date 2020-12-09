@@ -126,6 +126,8 @@ int main() {
 			if(!pause) lightCycle.update();
 			//set background color according to cycle
 			glClearColor(g_mapData->skyColor.r, g_mapData->skyColor.g, g_mapData->skyColor.b, 1.0f);
+			//randomize entity direction
+			if(!pause) entity.randomizePathing();
 		}
         //reset delta time 
 		if(deltaTime >= 1.f) deltaTime -= 1.f;

@@ -28,5 +28,6 @@ class Entity {
         Entity();
         void draw();
         void mov();
+        void randomizePathing();
 };
 #endif
