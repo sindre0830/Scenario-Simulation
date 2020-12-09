@@ -11,6 +11,7 @@
 class LightCycle {
     private:
         /* private data */
+        int hour = 1;
     public:
         /* public functionality */
         ~LightCycle();

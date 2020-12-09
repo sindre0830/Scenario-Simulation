@@ -116,18 +116,16 @@ Entity::Entity() {
 }
 
 void Entity::draw() {
-    //dynamic light direction
-    glm::vec3 lightDirection(sin(glfwGetTime()), 3.f, cos(glfwGetTime()));
     //render aerial entites
     glUseProgram(aerielShaderProgram);
     glBindVertexArray(aerielVAO);
-    glUniform3fv(glGetUniformLocation(aerielShaderProgram, "u_lightDirection"), 1, glm::value_ptr(lightDirection));
+    glUniform3fv(glGetUniformLocation(aerielShaderProgram, "u_lightDirection"), 1, glm::value_ptr(g_mapData->lightDirection));
     glUniformMatrix4fv(glGetUniformLocation(aerielShaderProgram, "u_viewMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->viewMatrix));
     glDrawArraysInstanced(GL_TRIANGLES, 6, aerielMeshAmount, aerialInstanceIndex);
     //render ground entites
     glUseProgram(groundShaderProgram);
     glBindVertexArray(groundVAO);
-    glUniform3fv(glGetUniformLocation(groundShaderProgram, "u_lightDirection"), 1, glm::value_ptr(lightDirection));
+    glUniform3fv(glGetUniformLocation(groundShaderProgram, "u_lightDirection"), 1, glm::value_ptr(g_mapData->lightDirection));
     glUniformMatrix4fv(glGetUniformLocation(groundShaderProgram, "u_viewMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->viewMatrix));
     glDrawArraysInstanced(GL_TRIANGLES, 6, groundMeshAmount, groundInstanceIndex);
     glUseProgram(0);

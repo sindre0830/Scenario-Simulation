@@ -16,9 +16,14 @@ extern MapData* g_mapData;
 LightCycle::~LightCycle() {}
 
 LightCycle::LightCycle() {
-
+    update();
 }
 
 void LightCycle::update() {
-    
+    if(hour == 24) hour = 1;
+
+    g_mapData->lightDirection = glm::vec3(0.f, 3.f, 0.f);
+    g_mapData->skyColor = glm::vec3(0.7f, 1.0f, 1.0f);
+
+    hour++;
 }

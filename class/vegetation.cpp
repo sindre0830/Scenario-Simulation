@@ -74,9 +74,7 @@ Vegetation::Vegetation() {
 void Vegetation::draw() {
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
-    //dynamic light direction
-    glm::vec3 lightDirection(sin(glfwGetTime()), 3.f, cos(glfwGetTime()));
-    glUniform3fv(glGetUniformLocation(shaderProgram, "u_lightDirection"), 1, glm::value_ptr(lightDirection));
+    glUniform3fv(glGetUniformLocation(shaderProgram, "u_lightDirection"), 1, glm::value_ptr(g_mapData->lightDirection));
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_viewMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->viewMatrix));
     glDrawArraysInstanced(GL_TRIANGLES, 6, meshAmount, 600);
     glUseProgram(0);

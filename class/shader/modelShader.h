@@ -72,7 +72,7 @@ static const std::string modelFragmentShader = R"(
 
 		vec3 specular = u_specularity * specularPower * color;
 
-		return ambient + /*diffuse + */specular;
+		return ambient + diffuse + specular;
 	}
     /**
      * Main fragment shader program.

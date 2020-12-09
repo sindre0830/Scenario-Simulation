@@ -13,6 +13,7 @@
 #include "class/header/terrain.h"
 #include "class/header/vegetation.h"
 #include "class/header/entity.h"
+#include "class/header/lightCycle.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -78,11 +79,11 @@ int main() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//enable depth
 	glEnable(GL_DEPTH_TEST);
-	//set background color to cyan (sky color)
-	glClearColor(0.7f, 1.0f, 1.0f, 1.0f);
 	//load textures to be used in gameloop
 	GLuint terrainTex = loadHeightMap("HeightMaps/Gjovik_Height MapLow.png", TERRAIN_TEXTURE);
 	GLuint waterTex = loadTexture("NormalMapping/NormalMapping_Water.png", WATER_TEXTURE);
+	//construct lightCycle class
+	LightCycle lightCycle;
 	//construct terrain class
 	Terrain terrain;
 	//construct vegetation class
@@ -93,6 +94,8 @@ int main() {
 	static double limitFPS = 1.f / 30.f;
 	double lastTime = glfwGetTime(), nowTime = 0, timer = lastTime, deltaTime = 0.f;
 	int counter = 0;
+	//set initial background color
+	glClearColor(g_mapData->skyColor.r, g_mapData->skyColor.g, g_mapData->skyColor.b, 1.0f);
 	//loop until user closes window
 	while(!glfwWindowShouldClose(window)) {
 		//delta time managment
@@ -110,7 +113,14 @@ int main() {
 		vegetation.draw();
 		entity.draw();
 		if(deltaTime >= 1.f) entity.mov();
-
+		//branch every second
+		if(glfwGetTime() - timer > 1.0f) {
+			timer++;
+			//update the light cycle
+			lightCycle.update();
+			//set background color according to cycle
+			glClearColor(g_mapData->skyColor.r, g_mapData->skyColor.g, g_mapData->skyColor.b, 1.0f);
+		}
         //reset delta time 
 		if(deltaTime >= 1.f) deltaTime -= 1.f;
 		//go to next buffer
