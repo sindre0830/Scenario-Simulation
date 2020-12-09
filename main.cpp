@@ -91,7 +91,7 @@ int main() {
 	//construct entity class
 	Entity entity;
     //setup timer
-	static double limitFPS = 1.f / 60.f;
+	static double limitFPS = 1.f / 30.f;
 	double lastTime = glfwGetTime(), nowTime = 0, timer = lastTime, deltaTime = 0.f;
 	int counter = 0;
 	//set initial background color
@@ -119,9 +119,9 @@ int main() {
 		entity.draw();
 		//update entity positions
 		if(!pause && deltaTime >= 1.f) entity.mov();
-		//branch every second
-		if(glfwGetTime() - timer > 1.0f) {
-			timer++;
+		//branch every half a second
+		if(glfwGetTime() - timer > 0.5f) {
+			timer += 0.5f;
 			//update the light cycle
 			if(!pause) lightCycle.update();
 			//set background color according to cycle
