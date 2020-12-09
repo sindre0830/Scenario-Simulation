@@ -12,7 +12,7 @@ class Camera {
     private:
         /* private data */
         glm::vec3 camFront, camPos, camUp;
-        bool firstMouse = true;
+        bool firstMouse = true, thirdPerson = false;
         float yaw, pitch, lastX, lastY;
         const float sensitivity = 0.05f;
     public:
@@ -23,5 +23,6 @@ class Camera {
         Camera(const int width, const int height);
         void updatePosition(GLFWwindow *window, double deltaTime);
         void updateDirection(double xpos, double ypos);
+        void switchCamMode();
 };
 #endif

@@ -185,6 +185,10 @@ void Entity::mov() {
         const char *c_str = strBuffer.c_str();
         glUniform3fv(glGetUniformLocation(aerielShaderProgram, c_str), 1, glm::value_ptr(aerialInstancePos[i]));
     }
+    //update third person position (first aerial entity)
+    g_mapData->thirdPersonPos.x = (g_mapData->gridElement[std::make_pair(aerialGridPosition[0][COLUMN], aerialGridPosition[0][ROW])][0][X]);
+    g_mapData->thirdPersonPos.y = (g_mapData->gridElement[std::make_pair(aerialGridPosition[0][COLUMN], aerialGridPosition[0][ROW])][0][Y]);
+    g_mapData->thirdPersonPos.z = (g_mapData->gridElement[std::make_pair(aerialGridPosition[0][COLUMN], aerialGridPosition[0][ROW])][0][Z]);
     //move ground instances
     glUseProgram(groundShaderProgram);
     for(unsigned int i = 0; i < groundInstanceIndex; i++) {

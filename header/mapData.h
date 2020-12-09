@@ -14,5 +14,6 @@ struct MapData {
     std::map<std::pair<int, int>, std::vector<std::vector<float>>> gridElement;
     bool obstaclesInGridElement[200][200];
     glm::vec3 lightDirection, lightColor, skyColor;
+    glm::vec3 thirdPersonPos;
 };
 #endif
