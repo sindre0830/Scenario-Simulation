@@ -41,8 +41,8 @@ Entity::Entity() {
     modelMatrix = glm::scale(glm::mat4(1.f), glm::vec3(0.002f));
     glUniformMatrix4fv(glGetUniformLocation(aerialShaderProgram, "u_modelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
     //get all possible aerial enitites
-    for(int i = 0; i < g_mapData->gridHeight; i += 20) {
-        for(int j = 0; j < g_mapData->gridWidth; j += 20) {
+    for(int i = 0; i < g_mapData->gridHeight; i += 30) {
+        for(int j = 0; j < g_mapData->gridWidth; j += 30) {
             //branch if depth is higher than 75 (in gray and white area)
             if(g_mapData->gridElement[std::make_pair(i, j)][0][Z] > 75 / 255.f) {
                 glm::vec3 translation;
@@ -56,7 +56,7 @@ Entity::Entity() {
                 aerialGridPosition.push_back({i, j});
                 aerialGridPossiblePath[i][j] = false;
                 //set random distance
-                if(j + 40 < g_mapData->gridWidth) j += randomIndex(5, 20);
+                if(j + 50 < g_mapData->gridWidth) j += randomIndex(5, 20);
             }
         }
     }
@@ -86,8 +86,8 @@ Entity::Entity() {
     modelMatrix = glm::scale(glm::mat4(1.f), glm::vec3(0.02f));
     glUniformMatrix4fv(glGetUniformLocation(groundShaderProgram, "u_modelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
     //get all possible ground enitites
-    for(int i = 0; i < g_mapData->gridHeight; i += 20) {
-        for(int j = 0; j < g_mapData->gridWidth; j += 20) {
+    for(int i = 0; i < g_mapData->gridHeight; i += 30) {
+        for(int j = 0; j < g_mapData->gridWidth; j += 30) {
             //branch if depth is between 40 and 60 (in green area)
             if(g_mapData->gridElement[std::make_pair(i, j)][0][Z] > 40 / 255.f && g_mapData->gridElement[std::make_pair(i, j)][0][2] < 60 / 255.f) {
                 glm::vec3 translation;
@@ -101,7 +101,7 @@ Entity::Entity() {
                 groundGridPosition.push_back({i, j});
                 groundGridPossiblePath[i][j] = false;
                 //set random distance
-                if(j + 40 < g_mapData->gridWidth) j += randomIndex(5, 20);
+                if(j + 50 < g_mapData->gridWidth) j += randomIndex(5, 20);
             }
         }
     }
