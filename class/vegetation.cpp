@@ -49,13 +49,13 @@ Vegetation::Vegetation() {
                 translation.y = g_mapData->gridElement[std::make_pair(i, j)][0][Z] * (100.f * 2.f);
                 instancePos[instanceIndex] = translation;
                 instanceIndex++;
-                if(j + 10 < g_mapData->gridWidth) j += randomIndex(2, 5);
                 //remember initial position to compute coalition when moving entities
                 g_mapData->obstaclesInGridElement[i][j] = false;
+                //set random distance
+                if(j + 10 < g_mapData->gridWidth) j += randomIndex(2, 5);
             }
         }
     }
-    std::cout << instanceIndex << std::endl;
     //send initial position to uniform
     for(unsigned int i = 0; i < instanceIndex; i++) {
         std::string buffer = "offsets[" + std::to_string(i) + "]";

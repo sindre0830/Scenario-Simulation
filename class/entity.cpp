@@ -55,9 +55,12 @@ Entity::Entity() {
                 //remember initial position to compute coalition when moving
                 aerialGridPosition.push_back({i, j});
                 aerialGridPossiblePath[i][j] = false;
+                //set random distance
+                if(j + 40 < g_mapData->gridWidth) j += randomIndex(5, 20);
             }
         }
     }
+    std::cout << aerialInstanceIndex << std::endl;
     //fill in random paths
     std::vector<int> filler(aerialInstanceIndex, 0);
     for(int i = 0; i < aerialInstanceIndex; i++) {
@@ -97,6 +100,8 @@ Entity::Entity() {
                 //remember initial position to compute coalition when moving
                 groundGridPosition.push_back({i, j});
                 groundGridPossiblePath[i][j] = false;
+                //set random distance
+                if(j + 40 < g_mapData->gridWidth) j += randomIndex(5, 20);
             }
         }
     }
