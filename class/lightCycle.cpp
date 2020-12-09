@@ -21,20 +21,26 @@ LightCycle::LightCycle() {
 
 void LightCycle::update(const double deltaTime) {
     //move sun
-    g_mapData->lightDirection = glm::vec3(24.f / (float)(hour), 1.f, 0.f);
-    //set the correct color to the background according to the time
-    if(hour >= -1 && hour <= 1) {
+    if(hour <= 4) {
+        g_mapData->lightDirection = glm::vec3(1.04f, 1.f, 0.f);
+    } else g_mapData->lightDirection = glm::vec3(((float)(hour) / 24.f) * hour, 1.f, 0.f);
+    //set color to the background according to the time
+    if(hour <= 5) {
         //set night color
         g_mapData->skyColor = glm::vec3(0.01f, 0.01f, 0.14f);
-    } else if(hour >= -3 && hour <= 3) {
-        //set night color
+        g_mapData->lightColor = glm::vec3(1.f, 1.f, 1.f);
+    } else if(hour <= 7) {
+        //set mild night color
         g_mapData->skyColor = glm::vec3(0.01f, 0.01f, 0.44f);
-    } else if(hour >= -6 && hour <= 6) {
+        g_mapData->lightColor = glm::vec3(1.f, 0.9f, 0.65f);
+    } else if(hour <= 10) {
         //set morning/evening color
         g_mapData->skyColor = glm::vec3(0.f, 0.75f, 1.f);
+        g_mapData->lightColor = glm::vec3(1.f, 0.9f, 0.65f);
     } else {
         //set day color
         g_mapData->skyColor = glm::vec3(0.7f, 1.0f, 1.0f);
+        g_mapData->lightColor = glm::vec3(1.f, 1.f, 1.f);
     }
     //either increment or decrement according to cycle
     if(increment) {
@@ -42,6 +48,6 @@ void LightCycle::update(const double deltaTime) {
         if(hour == 12) increment = false;
     } else {
         hour--;
-        if(hour == -12) increment = true;
+        if(hour == 0) increment = true;
     }
 }

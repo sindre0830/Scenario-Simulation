@@ -13,6 +13,7 @@ static const std::string terrainVertexShader = R"(
 	out vec2 vs_texPos;
 	out vec4 vs_fragPos;
 	out vec3 vs_normal;
+	out mat4 vs_initialPos;
     /* uniform */
     uniform mat4 u_modelMatrix = mat4(1);
     uniform mat4 u_viewMatrix = mat4(1);
@@ -21,8 +22,14 @@ static const std::string terrainVertexShader = R"(
      * Main vertex shader program.
      */
 	void main() {
+		//set static light position
+		vs_initialPos[0] = vec4(1.f, 1.f, 3.f, 0.f);
+		vs_initialPos[1] = vec4(0.f, 0.f, -1.f, 0.f);
+		vs_initialPos[2] = vec4(0.f, 1.f, 0.f, 0.f);
+		vs_initialPos[3] = vec4(0.f, 0.f, 0.f, 1.f);
+
         vs_fragPos = vec4(a_gridPos, 1.f);
-        mat3 normalMatrix = transpose(inverse(mat3(u_viewMatrix * u_modelMatrix)));
+        mat3 normalMatrix = transpose(inverse(mat3(vs_initialPos * u_modelMatrix)));
         vs_normal = normalize(normalMatrix * normalize(a_normal));
 
 		vs_texPos = a_texPos;
@@ -36,6 +43,7 @@ static const std::string terrainFragmentShader = R"(
 	in vec2 vs_texPos;
 	in vec4 vs_fragPos;
 	in vec3 vs_normal;
+	in mat4 vs_initialPos;
     /* output */
 	out vec4 color;
     /* uniform */
@@ -62,7 +70,8 @@ static const std::string terrainFragmentShader = R"(
 
 		vec3 diffuse = color * max(0.f, dot(vs_normal, lightDirection));
 
-		vec3 viewDirection = normalize(vec3(inverse(u_viewMatrix) * vec4(0, 0, 0, 1) - u_modelMatrix * vs_fragPos));
+		//vec3 viewDirection = normalize(vec3(inverse(u_viewMatrix) * vec4(0, 0, 0, 1) - u_modelMatrix * vs_fragPos));
+		vec3 viewDirection = normalize(vec3(inverse(vs_initialPos) * vec4(0, 0, 0, 1) - u_modelMatrix * vs_fragPos));
 
 		vec3 reflectionDirection = reflect(lightDirection, vs_normal);
 

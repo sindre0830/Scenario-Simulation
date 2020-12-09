@@ -120,12 +120,14 @@ void Entity::draw() {
     glUseProgram(aerielShaderProgram);
     glBindVertexArray(aerielVAO);
     glUniform3fv(glGetUniformLocation(aerielShaderProgram, "u_lightDirection"), 1, glm::value_ptr(g_mapData->lightDirection));
+    glUniform3fv(glGetUniformLocation(aerielShaderProgram, "u_lightColor"), 1, glm::value_ptr(g_mapData->lightColor));
     glUniformMatrix4fv(glGetUniformLocation(aerielShaderProgram, "u_viewMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->viewMatrix));
     glDrawArraysInstanced(GL_TRIANGLES, 6, aerielMeshAmount, aerialInstanceIndex);
     //render ground entites
     glUseProgram(groundShaderProgram);
     glBindVertexArray(groundVAO);
     glUniform3fv(glGetUniformLocation(groundShaderProgram, "u_lightDirection"), 1, glm::value_ptr(g_mapData->lightDirection));
+    glUniform3fv(glGetUniformLocation(groundShaderProgram, "u_lightColor"), 1, glm::value_ptr(g_mapData->lightColor));
     glUniformMatrix4fv(glGetUniformLocation(groundShaderProgram, "u_viewMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->viewMatrix));
     glDrawArraysInstanced(GL_TRIANGLES, 6, groundMeshAmount, groundInstanceIndex);
     glUseProgram(0);

@@ -75,6 +75,7 @@ void Vegetation::draw() {
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
     glUniform3fv(glGetUniformLocation(shaderProgram, "u_lightDirection"), 1, glm::value_ptr(g_mapData->lightDirection));
+    glUniform3fv(glGetUniformLocation(shaderProgram, "u_lightColor"), 1, glm::value_ptr(g_mapData->lightColor));
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_viewMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->viewMatrix));
     glDrawArraysInstanced(GL_TRIANGLES, 6, meshAmount, 600);
     glUseProgram(0);

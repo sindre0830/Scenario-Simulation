@@ -112,6 +112,7 @@ void Terrain::draw() {
     glBindVertexArray(VAO);
     //dynamic light direction
     glUniform3fv(glGetUniformLocation(shaderProgram, "u_lightDirection"), 1, glm::value_ptr(g_mapData->lightDirection));
+    glUniform3fv(glGetUniformLocation(shaderProgram, "u_lightColor"), 1, glm::value_ptr(g_mapData->lightColor));
     glUniform1i(glGetUniformLocation(shaderProgram, "u_texture"), TERRAIN_TEXTURE);
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_viewMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->viewMatrix));
     glDrawElements(GL_TRIANGLES, (6 * meshAmount), GL_UNSIGNED_INT, (const void*)0);
@@ -119,6 +120,7 @@ void Terrain::draw() {
     glUseProgram(waterShaderProgram);
     glBindVertexArray(waterVAO);
     glUniform3fv(glGetUniformLocation(waterShaderProgram, "u_lightDirection"), 1, glm::value_ptr(g_mapData->lightDirection));
+    glUniform3fv(glGetUniformLocation(waterShaderProgram, "u_lightColor"), 1, glm::value_ptr(g_mapData->lightColor));
     glUniform1i(glGetUniformLocation(waterShaderProgram, "u_texture"), WATER_TEXTURE);
     glUniformMatrix4fv(glGetUniformLocation(waterShaderProgram, "u_viewMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->viewMatrix));
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (const void*)0);
