@@ -17,9 +17,11 @@ class Entity {
         int aerielMeshAmount = 0, groundMeshAmount = 0;
         glm::vec3 aerialInstancePos[42], groundInstancePos[18];
         int aerialInstanceIndex = 0, groundInstanceIndex = 0;
-        std::vector<int> aerialLastPath, groundLastPath;
+        std::vector<int> aerialLastDirection, groundLastDirection;
+        std::vector<std::vector<int>> aerialGridPosition, groundGridPosition;
+        bool aerialGridPossiblePath[200][200], groundGridPossiblePath[200][200];
         /* private functionality */
-        //std::vector<GLfloat> genCoordinates();
+        int getRandomPath(const bool pathNorth, const bool pathWest, const bool pathSouth, const bool pathEast, const int index);
     public:
         /* public functionality */
         ~Entity();

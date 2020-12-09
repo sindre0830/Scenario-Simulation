@@ -90,7 +90,7 @@ int main() {
 	//construct entity class
 	Entity entity;
     //setup timer
-	static double limitFPS = 1.f / 60.f;
+	static double limitFPS = 1.f / 30.f;
 	double lastTime = glfwGetTime(), nowTime = 0, timer = lastTime, deltaTime = 0.f;
 	int counter = 0;
 	//loop until user closes window

@@ -44,7 +44,7 @@ static const std::string modelFragmentShader = R"(
     /* uniform */
     uniform mat4 u_modelMatrix = mat4(1);
     uniform mat4 u_viewMatrix = mat4(1);
-	uniform vec3 u_objectColor = vec3(1.f, 0.f, 0.f);
+	uniform vec3 u_objectColor = vec3(1.f);
 	uniform vec3 u_lightColor = vec3(1.f);
 	uniform vec3 u_lightPos = vec3(1.f);
 	uniform vec3 u_lightDirection = vec3(1.f);  
