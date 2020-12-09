@@ -49,7 +49,7 @@ Entity::Entity() {
                 //multiply the value by 500 to compensate for the bird scaling(0.002f * 500.f = 1), then multiply by 2 because of the terrain scalling(2.f)
                 translation.x = g_mapData->gridElement[std::make_pair(i, j)][0][X] * (500.f * 2.f);
                 translation.y = g_mapData->gridElement[std::make_pair(i, j)][0][Y] * (500.f * 2.f);
-                translation.z = g_mapData->gridElement[std::make_pair(i, j)][0][Z] * (500.f * 2.f) + 200.f;
+                translation.z = g_mapData->gridElement[std::make_pair(i, j)][0][Z] * (500.f * 2.f) + 500.f;
                 aerialInstancePos[aerialInstanceIndex] = translation;
                 aerialInstanceIndex++;
                 //remember initial position to compute coalition when moving
@@ -178,7 +178,7 @@ void Entity::mov() {
                 //skip
                 break;
         }
-        aerialInstancePos[i].z = (g_mapData->gridElement[std::make_pair(aerialGridPosition[i][COLUMN], aerialGridPosition[i][ROW])][0][Z] * (500.f * 2.f)) + 200.f;
+        aerialInstancePos[i].z = (g_mapData->gridElement[std::make_pair(aerialGridPosition[i][COLUMN], aerialGridPosition[i][ROW])][0][Z] * (500.f * 2.f)) + 500.f;
         aerialGridPossiblePath[aerialGridPosition[i][COLUMN]][aerialGridPosition[i][ROW]] = false;
         //send position to uniform
         std::string strBuffer = "offsets[" + std::to_string(i) + "]";
