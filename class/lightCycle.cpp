@@ -16,10 +16,10 @@ extern MapData* g_mapData;
 LightCycle::~LightCycle() {}
 
 LightCycle::LightCycle() {
-    update(0.f);
+    update();
 }
 
-void LightCycle::update(const double deltaTime) {
+void LightCycle::update() {
     //move sun
     if(hour <= 4) {
         g_mapData->lightDirection = glm::vec3(1.04f, 1.f, 0.f);

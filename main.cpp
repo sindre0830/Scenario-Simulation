@@ -96,6 +96,8 @@ int main() {
 	int counter = 0;
 	//set initial background color
 	glClearColor(g_mapData->skyColor.r, g_mapData->skyColor.g, g_mapData->skyColor.b, 1.0f);
+	//options
+	bool pause = false;
 	//loop until user closes window
 	while(!glfwWindowShouldClose(window)) {
 		//delta time managment
@@ -104,6 +106,9 @@ int main() {
 		lastTime = nowTime;
 		//move camera
 		g_camera->updatePosition(window, deltaTime);
+		//check for user input
+		if(glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) pause = false;
+		if(glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) pause = true;
 		//processes all pending events
 		glfwPollEvents();
 		//for every frame reset background color buffer and depth buffer
@@ -113,12 +118,12 @@ int main() {
 		vegetation.draw();
 		entity.draw();
 		//update entity positions
-		if(deltaTime >= 1.f) entity.mov();
+		if(!pause && deltaTime >= 1.f) entity.mov();
 		//branch every second
 		if(glfwGetTime() - timer > 1.0f) {
 			timer++;
 			//update the light cycle
-			lightCycle.update(deltaTime);
+			if(!pause) lightCycle.update();
 			//set background color according to cycle
 			glClearColor(g_mapData->skyColor.r, g_mapData->skyColor.g, g_mapData->skyColor.b, 1.0f);
 		}

@@ -261,10 +261,10 @@ GLuint loadHeightMap(const std::string& filepath, const GLuint slot) {
             color = (static_cast<float>(pixels[index + 0]) + static_cast<float>(pixels[index + 1]) + static_cast<float>(pixels[index + 2])) / 3.f;
             arr.push_back(color / 255.f);
             //change color according to depth
-            if(color < 30) {
-                pixels[index + 0] = 255;
-                pixels[index + 1] = 208;
-                pixels[index + 2] = 89;
+            if(color < 33) {
+                pixels[index + 0] = 207;
+                pixels[index + 1] = 170;
+                pixels[index + 2] = 78;
             } else if(color < 80) {
                 pixels[index + 0] = 35;
                 pixels[index + 1] = 145;

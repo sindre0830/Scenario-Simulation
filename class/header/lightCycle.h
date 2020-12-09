@@ -17,6 +17,6 @@ class LightCycle {
         /* public functionality */
         ~LightCycle();
         LightCycle();
-        void update(const double deltaTime);
+        void update();
 };
 #endif
