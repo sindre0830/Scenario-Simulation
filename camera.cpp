@@ -33,16 +33,15 @@ void Camera::updatePosition(GLFWwindow *window, double deltaTime) {
 	const float camSpeed = 0.01f * deltaTime;
 	if(glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) thirdPerson = false;
 	if(glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS) thirdPerson = true;
+	//branch if user is in first person
 	if(!thirdPerson) {
 		//update camPos according to user input
 		if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) camPos += camSpeed * camFront;
 		if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) camPos -= camSpeed * camFront;
 		if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) camPos -= glm::normalize(glm::cross(camFront, camUp)) * camSpeed;
 		if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) camPos += glm::normalize(glm::cross(camFront, camUp)) * camSpeed;
-	} else {
-		//2 is 1 and -2 is -1
-		camPos = glm::vec3(g_mapData->thirdPersonPos.x * 2.f, g_mapData->thirdPersonPos.z * 2.f + 2.f, -g_mapData->thirdPersonPos.y * 2.f);
-	}
+	//branch if user is in third person and update camPos according to a bird
+	} else camPos = glm::vec3(g_mapData->thirdPersonPos.x * 2.f, g_mapData->thirdPersonPos.y * 2.f + 2.f, g_mapData->thirdPersonPos.z * 2.f);
 	//update view matrix
 	viewMatrix = glm::lookAt(camPos, camPos + camFront, camUp);
 }

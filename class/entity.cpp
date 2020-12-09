@@ -38,7 +38,7 @@ Entity::Entity() {
     glUniformMatrix4fv(glGetUniformLocation(aerialShaderProgram, "u_projectionMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->projectionMatrix));
     //rotate and scale entity
     glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(-1.f, 0.f, 0.f));
-    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.002f));
+    modelMatrix = glm::scale(glm::mat4(1.f), glm::vec3(0.002f));
     glUniformMatrix4fv(glGetUniformLocation(aerialShaderProgram, "u_modelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
     //get all possible aerial enitites
     for(int i = 0; i < g_mapData->gridHeight; i += 20) {
@@ -48,8 +48,8 @@ Entity::Entity() {
                 glm::vec3 translation;
                 //multiply the value by 500 to compensate for the bird scaling(0.002f * 500.f = 1), then multiply by 2 because of the terrain scalling(2.f)
                 translation.x = g_mapData->gridElement[std::make_pair(i, j)][0][X] * (500.f * 2.f);
-                translation.y = g_mapData->gridElement[std::make_pair(i, j)][0][Y] * (500.f * 2.f);
-                translation.z = g_mapData->gridElement[std::make_pair(i, j)][0][Z] * (500.f * 2.f) + 500.f;
+                translation.z = -g_mapData->gridElement[std::make_pair(i, j)][0][Y] * (500.f * 2.f);
+                translation.y = g_mapData->gridElement[std::make_pair(i, j)][0][Z] * (500.f * 2.f) + 500.f;
                 aerialInstancePos[aerialInstanceIndex] = translation;
                 aerialInstanceIndex++;
                 //remember initial position to compute coalition when moving
@@ -80,7 +80,7 @@ Entity::Entity() {
     glUniformMatrix4fv(glGetUniformLocation(groundShaderProgram, "u_projectionMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->projectionMatrix));
     //rotate and scale entity
     modelMatrix = glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(-1.f, 0.f, 0.f));
-    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.02f));
+    modelMatrix = glm::scale(glm::mat4(1.f), glm::vec3(0.02f));
     glUniformMatrix4fv(glGetUniformLocation(groundShaderProgram, "u_modelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
     //get all possible ground enitites
     for(int i = 0; i < g_mapData->gridHeight; i += 20) {
@@ -90,8 +90,8 @@ Entity::Entity() {
                 glm::vec3 translation;
                 //multiply the value by 50 to compensate for the deer scaling(0.02f * 50.f = 1), then multiply by 2 because of the terrain scaling(2.f)
                 translation.x = g_mapData->gridElement[std::make_pair(i, j)][0][X] * (50.f * 2.f);
-                translation.y = g_mapData->gridElement[std::make_pair(i, j)][0][Y] * (50.f * 2.f);
-                translation.z = g_mapData->gridElement[std::make_pair(i, j)][0][Z] * (50.f * 2.f);
+                translation.z = -g_mapData->gridElement[std::make_pair(i, j)][0][Y] * (50.f * 2.f);
+                translation.y = g_mapData->gridElement[std::make_pair(i, j)][0][Z] * (50.f * 2.f);
                 groundInstancePos[groundInstanceIndex] = translation;
                 groundInstanceIndex++;
                 //remember initial position to compute coalition when moving
@@ -162,13 +162,13 @@ void Entity::mov() {
         aerialGridPossiblePath[aerialGridPosition[i][COLUMN]][aerialGridPosition[i][ROW]] = true;
         switch(aerialLastDirection[i]) {
             case NORTH:
-                aerialInstancePos[i].y = (g_mapData->gridElement[std::make_pair(++aerialGridPosition[i][COLUMN], aerialGridPosition[i][ROW])][0][Y] * (500.f * 2.f));
+                aerialInstancePos[i].z = (-g_mapData->gridElement[std::make_pair(++aerialGridPosition[i][COLUMN], aerialGridPosition[i][ROW])][0][Y] * (500.f * 2.f));
                 break;
             case WEST:
                 aerialInstancePos[i].x = (g_mapData->gridElement[std::make_pair(aerialGridPosition[i][COLUMN], --aerialGridPosition[i][ROW])][0][X] * (500.f * 2.f));
                 break;
             case SOUTH:
-                aerialInstancePos[i].y = (g_mapData->gridElement[std::make_pair(--aerialGridPosition[i][COLUMN], aerialGridPosition[i][ROW])][0][Y] * (500.f * 2.f));
+                aerialInstancePos[i].z = (-g_mapData->gridElement[std::make_pair(--aerialGridPosition[i][COLUMN], aerialGridPosition[i][ROW])][0][Y] * (500.f * 2.f));
                 break;
             case EAST:
                 aerialInstancePos[i].x = (g_mapData->gridElement[std::make_pair(aerialGridPosition[i][COLUMN], ++aerialGridPosition[i][ROW])][0][X] * (500.f * 2.f));
@@ -177,7 +177,7 @@ void Entity::mov() {
                 //skip
                 break;
         }
-        aerialInstancePos[i].z = (g_mapData->gridElement[std::make_pair(aerialGridPosition[i][COLUMN], aerialGridPosition[i][ROW])][0][Z] * (500.f * 2.f)) + 500.f;
+        aerialInstancePos[i].y = (g_mapData->gridElement[std::make_pair(aerialGridPosition[i][COLUMN], aerialGridPosition[i][ROW])][0][Z] * (500.f * 2.f)) + 500.f;
         aerialGridPossiblePath[aerialGridPosition[i][COLUMN]][aerialGridPosition[i][ROW]] = false;
         //send position to uniform
         std::string buffer = "offsets[" + std::to_string(i) + "]";
@@ -186,8 +186,8 @@ void Entity::mov() {
     }
     //update third person position (first aerial entity)
     g_mapData->thirdPersonPos.x = (g_mapData->gridElement[std::make_pair(aerialGridPosition[0][COLUMN], aerialGridPosition[0][ROW])][0][X]);
-    g_mapData->thirdPersonPos.y = (g_mapData->gridElement[std::make_pair(aerialGridPosition[0][COLUMN], aerialGridPosition[0][ROW])][0][Y]);
-    g_mapData->thirdPersonPos.z = (g_mapData->gridElement[std::make_pair(aerialGridPosition[0][COLUMN], aerialGridPosition[0][ROW])][0][Z]);
+    g_mapData->thirdPersonPos.z = (-g_mapData->gridElement[std::make_pair(aerialGridPosition[0][COLUMN], aerialGridPosition[0][ROW])][0][Y]);
+    g_mapData->thirdPersonPos.y = (g_mapData->gridElement[std::make_pair(aerialGridPosition[0][COLUMN], aerialGridPosition[0][ROW])][0][Z]);
     //move ground instances
     glUseProgram(groundShaderProgram);
     for(unsigned int i = 0; i < groundInstanceIndex; i++) {
@@ -218,13 +218,13 @@ void Entity::mov() {
         groundGridPossiblePath[groundGridPosition[i][COLUMN]][groundGridPosition[i][ROW]] = true;
         switch(groundLastDirection[i]) {
             case NORTH:
-                groundInstancePos[i].y = (g_mapData->gridElement[std::make_pair(++groundGridPosition[i][COLUMN], groundGridPosition[i][ROW])][0][Y] * (50.f * 2.f));
+                groundInstancePos[i].z = (-g_mapData->gridElement[std::make_pair(++groundGridPosition[i][COLUMN], groundGridPosition[i][ROW])][0][Y] * (50.f * 2.f));
                 break;
             case WEST:
                 groundInstancePos[i].x = (g_mapData->gridElement[std::make_pair(groundGridPosition[i][COLUMN], --groundGridPosition[i][ROW])][0][X] * (50.f * 2.f));
                 break;
             case SOUTH:
-                groundInstancePos[i].y = (g_mapData->gridElement[std::make_pair(--groundGridPosition[i][COLUMN], groundGridPosition[i][ROW])][0][Y] * (50.f * 2.f));
+                groundInstancePos[i].z = (-g_mapData->gridElement[std::make_pair(--groundGridPosition[i][COLUMN], groundGridPosition[i][ROW])][0][Y] * (50.f * 2.f));
                 break;
             case EAST:
                 groundInstancePos[i].x = (g_mapData->gridElement[std::make_pair(groundGridPosition[i][COLUMN], ++groundGridPosition[i][ROW])][0][X] * (50.f * 2.f));
@@ -233,7 +233,7 @@ void Entity::mov() {
                 //skip if no possible paths possible
                 break;
         }
-        groundInstancePos[i].z = (g_mapData->gridElement[std::make_pair(groundGridPosition[i][COLUMN], groundGridPosition[i][ROW])][0][Z] * (50.f * 2.f));
+        groundInstancePos[i].y = (g_mapData->gridElement[std::make_pair(groundGridPosition[i][COLUMN], groundGridPosition[i][ROW])][0][Z] * (50.f * 2.f));
         groundGridPossiblePath[groundGridPosition[i][COLUMN]][groundGridPosition[i][ROW]] = false;
         //send position to uniform
         std::string buffer = "offsets[" + std::to_string(i) + "]";

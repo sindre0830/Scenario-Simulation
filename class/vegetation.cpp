@@ -35,8 +35,8 @@ Vegetation::Vegetation() {
     //set projection matrix uniform
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_projectionMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->projectionMatrix));
     //rotate and scale entity
-    glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(-1.f, 0.f, 0.f));
-    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.01f));
+    glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(0.f, 0.f, 0.f));
+    modelMatrix = glm::scale(glm::mat4(1.f), glm::vec3(0.01f));
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_modelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
     //generate coordinates for each instance
     glm::vec3 gridInstancePos[600];
@@ -47,8 +47,8 @@ Vegetation::Vegetation() {
                 glm::vec3 translation;
                 //multiply the value by 100 to compensate for the tree scaling(0.01f * 100.f = 1), then multiply by 2 because of the terrain scalling
                 translation.x = g_mapData->gridElement[std::make_pair(i, j)][0][X] * (100.f * 2.f);
-                translation.y = g_mapData->gridElement[std::make_pair(i, j)][0][Y] * (100.f * 2.f);
-                translation.z = g_mapData->gridElement[std::make_pair(i, j)][0][Z] * (100.f * 2.f);
+                translation.z = -g_mapData->gridElement[std::make_pair(i, j)][0][Y] * (100.f * 2.f);
+                translation.y = g_mapData->gridElement[std::make_pair(i, j)][0][Z] * (100.f * 2.f);
                 gridInstancePos[instanceIndex] = translation;
                 instanceIndex++;
                 //remember initial position to compute coalition when moving entities

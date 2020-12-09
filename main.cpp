@@ -108,10 +108,11 @@ int main() {
 		glfwPollEvents();
 		//for every frame reset background color buffer and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
+        //render VAOs
 		terrain.draw();
 		vegetation.draw();
 		entity.draw();
+		//update entity positions
 		if(deltaTime >= 1.f) entity.mov();
 		//branch every second
 		if(glfwGetTime() - timer > 1.0f) {
