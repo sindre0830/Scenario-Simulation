@@ -60,7 +60,6 @@ Entity::Entity() {
             }
         }
     }
-    std::cout << aerialInstanceIndex << std::endl;
     //fill in random paths
     std::vector<int> filler(aerialInstanceIndex, 0);
     for(int i = 0; i < aerialInstanceIndex; i++) {
