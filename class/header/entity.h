@@ -15,7 +15,7 @@ class Entity {
         GLuint aerialShaderProgram = 0, groundShaderProgram = 0;
         GLuint aerialVAO = 0, groundVAO = 0;
         int aerialMeshAmount = 0, groundMeshAmount = 0;
-        glm::vec3 aerialInstancePos[42], groundInstancePos[18];
+        glm::vec3 aerialInstancePos[1000], groundInstancePos[1000];
         int aerialInstanceIndex = 0, groundInstanceIndex = 0;
         std::vector<int> aerialLastDirection, groundLastDirection;
         std::vector<std::vector<int>> aerialGridPosition, groundGridPosition;

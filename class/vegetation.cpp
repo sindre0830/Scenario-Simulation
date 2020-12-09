@@ -5,7 +5,6 @@
 #include "camera.h"
 #include "mapData.h"
 #include "functionality.h"
-#include <glm/glm.hpp>
 #include <glm/gtx/matrix_transform_2d.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
@@ -39,7 +38,6 @@ Vegetation::Vegetation() {
     modelMatrix = glm::scale(glm::mat4(1.f), glm::vec3(0.01f));
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_modelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
     //generate coordinates for each instance
-    glm::vec3 gridInstancePos[600];
     for(int i = 0; i < g_mapData->gridHeight; i += 5) {
         for(int j = 0; j < g_mapData->gridWidth; j += 5) {
             //branch if depth is between 42 and 79 (in green area)
@@ -49,18 +47,20 @@ Vegetation::Vegetation() {
                 translation.x = g_mapData->gridElement[std::make_pair(i, j)][0][X] * (100.f * 2.f);
                 translation.z = -g_mapData->gridElement[std::make_pair(i, j)][0][Y] * (100.f * 2.f);
                 translation.y = g_mapData->gridElement[std::make_pair(i, j)][0][Z] * (100.f * 2.f);
-                gridInstancePos[instanceIndex] = translation;
+                instancePos[instanceIndex] = translation;
                 instanceIndex++;
+                if(j + 10 < g_mapData->gridWidth) j += randomIndex(2, 5);
                 //remember initial position to compute coalition when moving entities
                 g_mapData->obstaclesInGridElement[i][j] = false;
             }
         }
     }
+    std::cout << instanceIndex << std::endl;
     //send initial position to uniform
     for(unsigned int i = 0; i < instanceIndex; i++) {
         std::string buffer = "offsets[" + std::to_string(i) + "]";
         const char *uniformLoc = buffer.c_str();
-        glUniform3fv(glGetUniformLocation(shaderProgram, uniformLoc), 1, glm::value_ptr(gridInstancePos[i]));
+        glUniform3fv(glGetUniformLocation(shaderProgram, uniformLoc), 1, glm::value_ptr(instancePos[i]));
     } 
     glUseProgram(0);
 }

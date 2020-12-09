@@ -15,7 +15,7 @@ static const std::string modelVertexShader = R"(
     uniform mat4 u_modelMatrix = mat4(1);
     uniform mat4 u_viewMatrix = mat4(1);
     uniform mat4 u_projectionMatrix = mat4(1);
-	uniform vec3 offsets[600];
+	uniform vec3 offsets[1000];
     /**
      * Main vertex shader program.
      */
