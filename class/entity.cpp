@@ -14,9 +14,9 @@ extern Camera *g_camera;
 extern MapData* g_mapData;
 
 Entity::~Entity() {
-    glDeleteProgram(aerielShaderProgram);
+    glDeleteProgram(aerialShaderProgram);
     glDeleteProgram(groundShaderProgram);
-    destroyVAO(aerielVAO);
+    destroyVAO(aerialVAO);
     destroyVAO(groundVAO);
 }
 
@@ -28,18 +28,18 @@ Entity::Entity() {
             aerialGridPossiblePath[i][j] = true;
         }
     }
-    //construct aeriel entity
-    aerielShaderProgram = compileShader(modelVertexShader, modelFragmentShader);
-	glUseProgram(aerielShaderProgram);
-    aerielVAO = loadModel("Objects/Eagle/", "Eagle02.obj", aerielMeshAmount);
+    //construct aerial entity
+    aerialShaderProgram = compileShader(modelVertexShader, modelFragmentShader);
+	glUseProgram(aerialShaderProgram);
+    aerialVAO = loadModel("Objects/Eagle/", "Eagle02.obj", aerialMeshAmount);
 	//change color to light brown;
-	glUniform3fv(glGetUniformLocation(aerielShaderProgram, "u_objectColor"), 1, glm::value_ptr(glm::vec3(0.28f, 0.16f, 0.04f)));
+	glUniform3fv(glGetUniformLocation(aerialShaderProgram, "u_objectColor"), 1, glm::value_ptr(glm::vec3(0.28f, 0.16f, 0.04f)));
     //set projection matrix uniform
-    glUniformMatrix4fv(glGetUniformLocation(aerielShaderProgram, "u_projectionMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->projectionMatrix));
+    glUniformMatrix4fv(glGetUniformLocation(aerialShaderProgram, "u_projectionMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->projectionMatrix));
     //rotate and scale entity
     glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(-1.f, 0.f, 0.f));
     modelMatrix = glm::scale(modelMatrix, glm::vec3(0.002f));
-    glUniformMatrix4fv(glGetUniformLocation(aerielShaderProgram, "u_modelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
+    glUniformMatrix4fv(glGetUniformLocation(aerialShaderProgram, "u_modelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
     //get all possible aerial enitites
     for(int i = 0; i < g_mapData->gridHeight; i += 20) {
         for(int j = 0; j < g_mapData->gridWidth; j += 20) {
@@ -66,9 +66,9 @@ Entity::Entity() {
     aerialLastDirection = filler;
     //send initial position to uniform
     for(unsigned int i = 0; i < aerialInstanceIndex; i++) {
-        std::string strBuffer = "offsets[" + std::to_string(i) + "]";
-        const char *c_str = strBuffer.c_str();
-        glUniform3fv(glGetUniformLocation(aerielShaderProgram, c_str), 1, glm::value_ptr(aerialInstancePos[i]));
+        std::string buffer = "offsets[" + std::to_string(i) + "]";
+        const char *uniformLoc = buffer.c_str();
+        glUniform3fv(glGetUniformLocation(aerialShaderProgram, uniformLoc), 1, glm::value_ptr(aerialInstancePos[i]));
     }
     //construct ground entity
     groundShaderProgram = compileShader(modelVertexShader, modelFragmentShader);
@@ -108,23 +108,23 @@ Entity::Entity() {
     groundLastDirection = filler;
     //send initial position to uniform
     for(unsigned int i = 0; i < groundInstanceIndex; i++) {
-        std::string strBuffer = "offsets[" + std::to_string(i) + "]";
-        const char *c_str = strBuffer.c_str();
-        glUniform3fv(glGetUniformLocation(groundShaderProgram, c_str), 1, glm::value_ptr(groundInstancePos[i]));
+        std::string buffer = "offsets[" + std::to_string(i) + "]";
+        const char *uniformLoc = buffer.c_str();
+        glUniform3fv(glGetUniformLocation(groundShaderProgram, uniformLoc), 1, glm::value_ptr(groundInstancePos[i]));
     }
     glUseProgram(0);
 }
 
 void Entity::draw() {
-    //render aerial entites
-    glUseProgram(aerielShaderProgram);
-    glBindVertexArray(aerielVAO);
-    glUniform3fv(glGetUniformLocation(aerielShaderProgram, "u_lightDirection"), 1, glm::value_ptr(g_mapData->lightDirection));
-    glUniform3fv(glGetUniformLocation(aerielShaderProgram, "u_lightColor"), 1, glm::value_ptr(g_mapData->lightColor));
-    glUniformMatrix4fv(glGetUniformLocation(aerielShaderProgram, "u_projectionMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->projectionMatrix));
-    glUniformMatrix4fv(glGetUniformLocation(aerielShaderProgram, "u_viewMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->viewMatrix));
-    glDrawArraysInstanced(GL_TRIANGLES, 6, aerielMeshAmount, aerialInstanceIndex);
-    //render ground entites
+    //render aerial entities
+    glUseProgram(aerialShaderProgram);
+    glBindVertexArray(aerialVAO);
+    glUniform3fv(glGetUniformLocation(aerialShaderProgram, "u_lightDirection"), 1, glm::value_ptr(g_mapData->lightDirection));
+    glUniform3fv(glGetUniformLocation(aerialShaderProgram, "u_lightColor"), 1, glm::value_ptr(g_mapData->lightColor));
+    glUniformMatrix4fv(glGetUniformLocation(aerialShaderProgram, "u_projectionMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->projectionMatrix));
+    glUniformMatrix4fv(glGetUniformLocation(aerialShaderProgram, "u_viewMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->viewMatrix));
+    glDrawArraysInstanced(GL_TRIANGLES, 6, aerialMeshAmount, aerialInstanceIndex);
+    //render ground entities
     glUseProgram(groundShaderProgram);
     glBindVertexArray(groundVAO);
     glUniform3fv(glGetUniformLocation(groundShaderProgram, "u_lightDirection"), 1, glm::value_ptr(g_mapData->lightDirection));
@@ -137,25 +137,22 @@ void Entity::draw() {
 
 void Entity::mov() {
     //move aerial instances
-    glUseProgram(aerielShaderProgram);
+    glUseProgram(aerialShaderProgram);
     for(unsigned int i = 0; i < aerialInstanceIndex; i++) {
+        //get all possible paths (N/W/S/E) by checking if it is inside the world box and not colliding with other birds
         bool
             pathNorth = 
                 aerialGridPosition[i][COLUMN] + 1 < g_mapData->gridHeight && 
-                aerialGridPossiblePath[aerialGridPosition[i][COLUMN] + 1][aerialGridPosition[i][ROW]] && 
-                g_mapData->obstaclesInGridElement[aerialGridPosition[i][COLUMN] + 1][aerialGridPosition[i][ROW]],
+                aerialGridPossiblePath[aerialGridPosition[i][COLUMN] + 1][aerialGridPosition[i][ROW]],
             pathWest = 
                 aerialGridPosition[i][ROW] - 1 >= 0 && 
-                aerialGridPossiblePath[aerialGridPosition[i][COLUMN]][aerialGridPosition[i][ROW] - 1] && 
-                g_mapData->obstaclesInGridElement[aerialGridPosition[i][COLUMN]][aerialGridPosition[i][ROW] - 1],
+                aerialGridPossiblePath[aerialGridPosition[i][COLUMN]][aerialGridPosition[i][ROW] - 1],
             pathSouth = 
                 aerialGridPosition[i][COLUMN] - 1 >= 0 && 
-                aerialGridPossiblePath[aerialGridPosition[i][COLUMN] - 1][aerialGridPosition[i][ROW]] && 
-                g_mapData->obstaclesInGridElement[aerialGridPosition[i][COLUMN] - 1][aerialGridPosition[i][ROW]],
+                aerialGridPossiblePath[aerialGridPosition[i][COLUMN] - 1][aerialGridPosition[i][ROW]],
             pathEast = 
                 aerialGridPosition[i][ROW] + 1 < g_mapData->gridWidth && 
-                aerialGridPossiblePath[aerialGridPosition[i][COLUMN]][aerialGridPosition[i][ROW] + 1] && 
-                g_mapData->obstaclesInGridElement[aerialGridPosition[i][COLUMN]][aerialGridPosition[i][ROW] + 1];
+                aerialGridPossiblePath[aerialGridPosition[i][COLUMN]][aerialGridPosition[i][ROW] + 1];
         //branch if the entity can't move in the same path as before
         if(!((aerialLastDirection[i] == NORTH && pathNorth) || (aerialLastDirection[i] == WEST && pathWest) || (aerialLastDirection[i] == SOUTH && pathSouth) || (aerialLastDirection[i] == EAST && pathEast))) {
             //get a random possible path
@@ -183,9 +180,9 @@ void Entity::mov() {
         aerialInstancePos[i].z = (g_mapData->gridElement[std::make_pair(aerialGridPosition[i][COLUMN], aerialGridPosition[i][ROW])][0][Z] * (500.f * 2.f)) + 500.f;
         aerialGridPossiblePath[aerialGridPosition[i][COLUMN]][aerialGridPosition[i][ROW]] = false;
         //send position to uniform
-        std::string strBuffer = "offsets[" + std::to_string(i) + "]";
-        const char *c_str = strBuffer.c_str();
-        glUniform3fv(glGetUniformLocation(aerielShaderProgram, c_str), 1, glm::value_ptr(aerialInstancePos[i]));
+        std::string buffer = "offsets[" + std::to_string(i) + "]";
+        const char *uniformLoc = buffer.c_str();
+        glUniform3fv(glGetUniformLocation(aerialShaderProgram, uniformLoc), 1, glm::value_ptr(aerialInstancePos[i]));
     }
     //update third person position (first aerial entity)
     g_mapData->thirdPersonPos.x = (g_mapData->gridElement[std::make_pair(aerialGridPosition[0][COLUMN], aerialGridPosition[0][ROW])][0][X]);
@@ -194,19 +191,24 @@ void Entity::mov() {
     //move ground instances
     glUseProgram(groundShaderProgram);
     for(unsigned int i = 0; i < groundInstanceIndex; i++) {
+        //get all possible paths (N/W/S/E) by checking if it is inside the world box, not colliding with other deers and not colliding with trees
         bool
             pathNorth = 
                 groundGridPosition[i][COLUMN] + 1 < g_mapData->gridHeight && 
-                groundGridPossiblePath[groundGridPosition[i][COLUMN] + 1][groundGridPosition[i][ROW]],
+                groundGridPossiblePath[groundGridPosition[i][COLUMN] + 1][groundGridPosition[i][ROW]] &&
+                g_mapData->obstaclesInGridElement[groundGridPosition[i][COLUMN] + 1][groundGridPosition[i][ROW]],
             pathWest = 
                 groundGridPosition[i][ROW] - 1 >= 0 && 
-                groundGridPossiblePath[groundGridPosition[i][COLUMN]][groundGridPosition[i][ROW] - 1],
+                groundGridPossiblePath[groundGridPosition[i][COLUMN]][groundGridPosition[i][ROW] - 1] &&
+                g_mapData->obstaclesInGridElement[groundGridPosition[i][COLUMN]][groundGridPosition[i][ROW] - 1],
             pathSouth = 
                 groundGridPosition[i][COLUMN] - 1 >= 0 && 
-                groundGridPossiblePath[groundGridPosition[i][COLUMN] - 1][groundGridPosition[i][ROW]],
+                groundGridPossiblePath[groundGridPosition[i][COLUMN] - 1][groundGridPosition[i][ROW]] && 
+                g_mapData->obstaclesInGridElement[groundGridPosition[i][COLUMN] - 1][groundGridPosition[i][ROW]],
             pathEast = 
                 groundGridPosition[i][ROW] + 1 < g_mapData->gridWidth && 
-                groundGridPossiblePath[groundGridPosition[i][COLUMN]][groundGridPosition[i][ROW] + 1];
+                groundGridPossiblePath[groundGridPosition[i][COLUMN]][groundGridPosition[i][ROW] + 1] && 
+                g_mapData->obstaclesInGridElement[groundGridPosition[i][COLUMN]][groundGridPosition[i][ROW] + 1];
         //branch if the entity can't move in the same path as before
         if(!((groundLastDirection[i] == NORTH && pathNorth) || (groundLastDirection[i] == WEST && pathWest) || (groundLastDirection[i] == SOUTH && pathSouth) || (groundLastDirection[i] == EAST && pathEast))) {
             //get a random possible path
@@ -234,9 +236,9 @@ void Entity::mov() {
         groundInstancePos[i].z = (g_mapData->gridElement[std::make_pair(groundGridPosition[i][COLUMN], groundGridPosition[i][ROW])][0][Z] * (50.f * 2.f));
         groundGridPossiblePath[groundGridPosition[i][COLUMN]][groundGridPosition[i][ROW]] = false;
         //send position to uniform
-        std::string strBuffer = "offsets[" + std::to_string(i) + "]";
-        const char *c_str = strBuffer.c_str();
-        glUniform3fv(glGetUniformLocation(groundShaderProgram, c_str), 1, glm::value_ptr(groundInstancePos[i]));
+        std::string buffer = "offsets[" + std::to_string(i) + "]";
+        const char *uniformLoc = buffer.c_str();
+        glUniform3fv(glGetUniformLocation(groundShaderProgram, uniformLoc), 1, glm::value_ptr(groundInstancePos[i]));
     }
     glUseProgram(0);
 }

@@ -11,8 +11,8 @@
 class Terrain {
     private:
         /* private data */
-        GLuint shaderProgram = 0, waterShaderProgram = 0;
-        GLuint VAO = 0, waterVAO = 0;
+        GLuint terrainShaderProgram = 0, waterShaderProgram = 0;
+        GLuint terrainVAO = 0, waterVAO = 0;
         int meshAmount = 0;
         /* private functionality */
         std::vector<GLfloat> genCoordinates();

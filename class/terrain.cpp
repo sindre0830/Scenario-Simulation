@@ -15,15 +15,15 @@ extern Camera *g_camera;
 extern MapData* g_mapData;
 
 Terrain::~Terrain() {
-    glDeleteProgram(shaderProgram);
+    glDeleteProgram(terrainShaderProgram);
     glDeleteProgram(waterShaderProgram);
-    destroyVAO(VAO);
+    destroyVAO(terrainVAO);
     destroyVAO(waterVAO);
 }
 
 Terrain::Terrain() {
     //construct terrain map
-    shaderProgram = compileShader(terrainVertexShader, terrainFragmentShader);
+    terrainShaderProgram = compileShader(terrainVertexShader, terrainFragmentShader);
     //create VAO
     std::vector<GLfloat> arr;
     for(int i = 0; i < g_mapData->gridHeight; i++) {
@@ -36,7 +36,7 @@ Terrain::Terrain() {
             }
         }
     }
-    VAO = genObject(arr, meshAmount);
+    terrainVAO = genObject(arr, meshAmount);
     //specify the layout of the vertex data
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (const void*)(0));
@@ -45,11 +45,11 @@ Terrain::Terrain() {
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (const void*)(5 * sizeof(GLfloat)));
     //set projection matrix uniform
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_projectionMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->projectionMatrix));
+    glUniformMatrix4fv(glGetUniformLocation(terrainShaderProgram, "u_projectionMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->projectionMatrix));
     //rotate and scale world
     glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(-1.f, 0.f, 0.f));
     modelMatrix = glm::scale(modelMatrix, glm::vec3(2.f));
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_modelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
+    glUniformMatrix4fv(glGetUniformLocation(terrainShaderProgram, "u_modelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
     //construct water texture
     waterShaderProgram = compileShader(terrainVertexShader, terrainFragmentShader);
     //create VAO
@@ -74,13 +74,13 @@ Terrain::Terrain() {
  */
 void Terrain::draw() {
     //render terrain map
-    glUseProgram(shaderProgram);
-    glBindVertexArray(VAO);
-    glUniform3fv(glGetUniformLocation(shaderProgram, "u_lightDirection"), 1, glm::value_ptr(g_mapData->lightDirection));
-    glUniform3fv(glGetUniformLocation(shaderProgram, "u_lightColor"), 1, glm::value_ptr(g_mapData->lightColor));
-    glUniform1i(glGetUniformLocation(shaderProgram, "u_texture"), TERRAIN_TEXTURE);
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_projectionMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->projectionMatrix));
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_viewMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->viewMatrix));
+    glUseProgram(terrainShaderProgram);
+    glBindVertexArray(terrainVAO);
+    glUniform3fv(glGetUniformLocation(terrainShaderProgram, "u_lightDirection"), 1, glm::value_ptr(g_mapData->lightDirection));
+    glUniform3fv(glGetUniformLocation(terrainShaderProgram, "u_lightColor"), 1, glm::value_ptr(g_mapData->lightColor));
+    glUniform1i(glGetUniformLocation(terrainShaderProgram, "u_texture"), TERRAIN_TEXTURE);
+    glUniformMatrix4fv(glGetUniformLocation(terrainShaderProgram, "u_projectionMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->projectionMatrix));
+    glUniformMatrix4fv(glGetUniformLocation(terrainShaderProgram, "u_viewMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->viewMatrix));
     glDrawElements(GL_TRIANGLES, (6 * meshAmount), GL_UNSIGNED_INT, (const void*)0);
     //render water texture
     glUseProgram(waterShaderProgram);

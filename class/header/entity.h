@@ -12,9 +12,9 @@
 class Entity {
     private:
         /* private data */
-        GLuint aerielShaderProgram = 0, groundShaderProgram = 0;
-        GLuint aerielVAO = 0, groundVAO = 0;
-        int aerielMeshAmount = 0, groundMeshAmount = 0;
+        GLuint aerialShaderProgram = 0, groundShaderProgram = 0;
+        GLuint aerialVAO = 0, groundVAO = 0;
+        int aerialMeshAmount = 0, groundMeshAmount = 0;
         glm::vec3 aerialInstancePos[42], groundInstancePos[18];
         int aerialInstanceIndex = 0, groundInstanceIndex = 0;
         std::vector<int> aerialLastDirection, groundLastDirection;

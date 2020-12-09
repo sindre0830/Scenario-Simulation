@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 /**
- * @brief Terrain class.
+ * @brief Vegetation class.
  * 
  */
 class Vegetation {
@@ -13,9 +13,7 @@ class Vegetation {
         /* private data */
         GLuint shaderProgram = 0;
         GLuint VAO = 0;
-        int meshAmount = 0;
-        /* private functionality */
-        //std::vector<GLfloat> genCoordinates();
+        int meshAmount = 0, instanceIndex = 0;
     public:
         /* public functionality */
         ~Vegetation();
