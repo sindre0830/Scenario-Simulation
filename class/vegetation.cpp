@@ -40,7 +40,7 @@ Vegetation::Vegetation() {
     //generate coordinates for each instance
     for(int i = 0; i < g_mapData->gridHeight; i += 5) {
         for(int j = 0; j < g_mapData->gridWidth; j += 5) {
-            //branch if depth is between 42 and 79 (in green area)
+            //branch if depth is between 35 and 77 (in green area)
             if(g_mapData->gridElement[std::make_pair(i, j)][0][Z] > 35 / 255.f && g_mapData->gridElement[std::make_pair(i, j)][0][2] < 77 / 255.f) {
                 glm::vec3 translation;
                 //multiply the value by 100 to compensate for the tree scaling(0.01f * 100.f = 1), then multiply by 2 because of the terrain scalling
