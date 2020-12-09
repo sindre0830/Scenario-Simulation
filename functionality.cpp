@@ -250,27 +250,17 @@ GLuint loadHeightMap(const std::string& filepath, const GLuint slot) {
 	//load pixel data from a stored image
     int width, height, bpp;
     auto pixels = stbi_load(filepath.c_str(), &width, &height, &bpp, STBI_rgb_alpha);
-    
-
-    const size_t RGBA = 4;
-    /*int x = 3;
-    int y = 4;
-    size_t index = RGBA * (y * width + x);
-    std::cout << "RGBA pixel @ (x=3, y=4): " 
-              << static_cast<int>(pixels[index + 0]) << " "
-              << static_cast<int>(pixels[index + 1]) << " "
-              << static_cast<int>(pixels[index + 2]) << " "
-              << static_cast<int>(pixels[index + 3]) << '\n';*/
-
     //get pixel color
     GLuint color;
     std::vector<std::vector<float>> pixelDepth;
     for(int i = 0; i < height; i++) {
         std::vector<float> arr;
         for(int j = 0; j < width; j++) {
-            size_t index = RGBA * (i * width + j);
-            color = (static_cast<float>(pixels[index]) + static_cast<float>(pixels[index + 1]) + static_cast<float>(pixels[index + 2])) / 3.f;
+            size_t index = STBI_rgb_alpha * (i * width + j);
+            //get depth value
+            color = (static_cast<float>(pixels[index + 0]) + static_cast<float>(pixels[index + 1]) + static_cast<float>(pixels[index + 2])) / 3.f;
             arr.push_back(color / 255.f);
+            //change color according to depth
             if(color < 30) {
                 pixels[index + 0] = 255;
                 pixels[index + 1] = 208;
@@ -289,21 +279,16 @@ GLuint loadHeightMap(const std::string& filepath, const GLuint slot) {
                 pixels[index + 2] = 227;
             }
         }
-        //std::reverse(arr.begin(), arr.end());
         pixelDepth.push_back(arr);
     }
-    //std::reverse(pixelDepth.begin(), pixelDepth.end());
-    //std::cout << pixelDepth[0].size() << std::endl;
-
-    int gridWidth = 200, gridHeight = 200;
-    //set element value
+    //set all offset values
     float gridElementWidth = 1.f / 100.f;
     float gridElementHeight = 1.f / 100.f;
-    float textureElementWidth = gridElementWidth / 2.f;
-    float textureElementHeight = gridElementHeight / 2.f;
-    int mapElementWidth = width / gridWidth;
-    int mapElementHeight = height / gridHeight;
-    //fills in map based on column and row (key) with a 2D vector of each corner coordinate (value)
+    int mapElementWidth = width / g_mapData->gridWidth;
+    int mapElementHeight = height / g_mapData->gridHeight;
+    float textureElementWidth = (float)(mapElementWidth) / width;
+    float textureElementHeight = (float)(mapElementHeight) / height;
+    //fills in map based on column and row (key) with a 2D vector of each corner position, texture and normals 
     float
         xPos = -1.f,
         yPos = -1.f,
@@ -312,47 +297,42 @@ GLuint loadHeightMap(const std::string& filepath, const GLuint slot) {
     int
         rowPixel = 0,
         colPixel = 0;
-    for(int i = 0; i < gridHeight; i++, xPos = -1.f, xTex = 0.f, rowPixel = 0, yPos += gridElementHeight, yTex += textureElementHeight, colPixel += mapElementHeight) {
-        for(int j = 0; j < gridWidth; j++, xPos += gridElementWidth, xTex += textureElementWidth, rowPixel += mapElementWidth) {
-            int indexR = 0, indexL = 0, indexU = 0, indexD = 0;
-            //std::cout << "RowPixel: " << rowPixel << ", ColPixel: " << colPixel << ", i: " << i << ", j: " << j << ", x: " << xPos << ", y: " << yPos << std::endl;
+    for(int i = 0; i < g_mapData->gridHeight; i++, xPos = -1.f, xTex = 0.f, rowPixel = 0, yPos += gridElementHeight, yTex += textureElementHeight, colPixel += mapElementHeight) {
+        for(int j = 0; j < g_mapData->gridWidth; j++, xPos += gridElementWidth, xTex += textureElementWidth, rowPixel += mapElementWidth) {
+            //generate normals
+            int indexRight = 0, indexLeft = 0, indexUp = 0, indexDown = 0;
             if(rowPixel - mapElementWidth < 0) {
-                indexR = 0;
-            } else indexR = rowPixel - mapElementWidth;
-
+                indexRight = 0;
+            } else indexRight = rowPixel - mapElementWidth;
             if(rowPixel + mapElementWidth > width) {
-                indexL = 0;
-            } else indexL = rowPixel + mapElementWidth;
-
+                indexLeft = 0;
+            } else indexLeft = rowPixel + mapElementWidth;
             if(colPixel + mapElementHeight > height) {
-                indexU = 0;
-            } else indexU = colPixel + mapElementHeight;
-            
+                indexUp = 0;
+            } else indexUp = colPixel + mapElementHeight;
             if(colPixel - mapElementHeight < 0) {
-                indexD = 0;
-            } else indexD = colPixel - mapElementHeight;
-
-            glm::vec3 normalVector = glm::normalize(glm::vec3(pixelDepth[colPixel][indexR] - pixelDepth[colPixel][indexL], 2.0f, pixelDepth[indexU][rowPixel] - pixelDepth[indexD][rowPixel]));
-            
-            //top left
+                indexDown = 0;
+            } else indexDown = colPixel - mapElementHeight;
+            glm::vec3 normalVector = glm::normalize(glm::vec3(pixelDepth[colPixel][indexRight] - pixelDepth[colPixel][indexLeft], 2.0f, pixelDepth[indexUp][rowPixel] - pixelDepth[indexDown][rowPixel]));
+            //insert top left corner values
             g_mapData->gridElement[std::make_pair(i, j)].push_back({
                 xPos, yPos + gridElementHeight, pixelDepth[colPixel + mapElementHeight][rowPixel],
                 xTex, yTex + textureElementHeight,
                 normalVector.x, normalVector.y, normalVector.z
             });
-            //bottom left
+            //insert bottom left corner values
             g_mapData->gridElement[std::make_pair(i, j)].push_back({
                 xPos, yPos, pixelDepth[colPixel][rowPixel],
                 xTex, yTex,
                 normalVector.x, normalVector.y, normalVector.z
             });
-            //bottom right
+            //insert bottom right corner values
             g_mapData->gridElement[std::make_pair(i, j)].push_back({
                 xPos + gridElementWidth, yPos, pixelDepth[colPixel][rowPixel + mapElementWidth],
                 xTex + textureElementWidth, yTex,
                 normalVector.x, normalVector.y, normalVector.z
             });
-            //top right
+            //insert top right corner values
             g_mapData->gridElement[std::make_pair(i, j)].push_back({
                 xPos + gridElementWidth, yPos + gridElementHeight, pixelDepth[colPixel + mapElementHeight][rowPixel + mapElementWidth],
                 xTex + textureElementWidth, yTex + textureElementHeight,
@@ -360,7 +340,6 @@ GLuint loadHeightMap(const std::string& filepath, const GLuint slot) {
             });
         }
     }
-
     //generate the texture, activate it and bind it
 	GLuint tex{};
     glGenTextures(1, &tex);
@@ -455,7 +434,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	if(widthDifference > 0 && heightDifference > 0) {
 		glViewport((widthDifference / 2) - (heightDifference / 2), 0, (width - widthDifference) + heightDifference, height);
 	} else if(widthDifference < 0 && heightDifference < 0) {
-		glViewport(-(heightDifference / 2), -(widthDifference / 2), (width + heightDifference), (height + widthDifference)); //wrong
+		glViewport(-(heightDifference / 2), -(widthDifference / 2), (width + heightDifference), (height + widthDifference));
 	} else if(widthDifference > 0 && heightDifference < 0) {
 		glViewport((widthDifference / 2) - (heightDifference / 2), 0, (width - widthDifference) + heightDifference, height);
 	} else if(widthDifference < 0 && heightDifference > 0) {
