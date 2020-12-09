@@ -41,7 +41,7 @@ void Camera::updatePosition(GLFWwindow *window, double deltaTime) {
 		if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) camPos += glm::normalize(glm::cross(camFront, camUp)) * camSpeed;
 	} else {
 		//2 is 1 and -2 is -1
-		camPos = glm::vec3(g_mapData->thirdPersonPos.x * 2.f, g_mapData->thirdPersonPos.z * 2.f + 2.f, g_mapData->thirdPersonPos.y * 2.f);
+		camPos = glm::vec3(g_mapData->thirdPersonPos.x * 2.f, g_mapData->thirdPersonPos.z * 2.f + 2.f, -g_mapData->thirdPersonPos.y * 2.f);
 	}
 	//update view matrix
 	viewMatrix = glm::lookAt(camPos, camPos + camFront, camUp);
