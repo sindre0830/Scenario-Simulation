@@ -11,6 +11,7 @@ static const std::string modelVertexShader = R"(
     /* output */
 	out vec4 vs_fragPos;
 	out vec3 vs_normal;
+	out mat4 vs_initialPos;
     /* uniform */
     uniform mat4 u_modelMatrix = mat4(1);
     uniform mat4 u_viewMatrix = mat4(1);
@@ -20,13 +21,16 @@ static const std::string modelVertexShader = R"(
      * Main vertex shader program.
      */
 	void main() {
+		//set static light position
+		vs_initialPos[0] = vec4(1.f, 1.f, 3.f, 0.f);
+		vs_initialPos[1] = vec4(0.f, 0.f, -1.f, 0.f);
+		vs_initialPos[2] = vec4(0.f, 1.f, 0.f, 0.f);
+		vs_initialPos[3] = vec4(0.f, 0.f, 0.f, 1.f);
+
     	vec3 offset = offsets[gl_InstanceID];
 
-		//We need these in a different shader later down the pipeline, so we need to send them along. Can't just call in a_Position unfortunately.
 		vs_fragPos = vec4(a_gridPos + offset, 1.f);
-		//Find the correct values for our normals given that we move our object around in the world and the normals change quite a bit.
-		mat3 normalMatrix = transpose(inverse(mat3(u_viewMatrix * u_modelMatrix)));
-		//Then normalize those new values so we do not accidentally go above length = 1. Also normalize the normals themselves beforehand, just to be sure calculations are accurate.
+		mat3 normalMatrix = transpose(inverse(mat3(vs_initialPos * u_modelMatrix)));
 		vs_normal = normalize(normalMatrix * normalize(a_normal));
 		
         gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * vec4(a_gridPos + offset, 1.f);
@@ -39,6 +43,7 @@ static const std::string modelFragmentShader = R"(
     /* input */
 	in vec4 vs_fragPos;
 	in vec3 vs_normal;
+	in mat4 vs_initialPos;
     /* output */
     out vec4 color;
     /* uniform */
@@ -64,7 +69,7 @@ static const std::string modelFragmentShader = R"(
 
 		vec3 diffuse = color * max(0.f, dot(vs_normal, lightDirection));
 
-		vec3 viewDirection = normalize(vec3(inverse(u_viewMatrix) * vec4(0, 0, 0, 1) - u_modelMatrix * vs_fragPos));
+		vec3 viewDirection = normalize(vec3(inverse(vs_initialPos) * vec4(0, 0, 0, 1) - u_modelMatrix * vs_fragPos));
 
 		vec3 reflectionDirection = reflect(lightDirection, vs_normal);
 
@@ -79,7 +84,6 @@ static const std::string modelFragmentShader = R"(
      */
 	void main() {
 		vec3 light = directionalLight(u_lightColor, u_lightDirection);
-		
 		color = vec4(u_objectColor, 1.f);
 		color = color * vec4(light, 1.f);
 	}
