@@ -11,8 +11,8 @@
 class LightCycle {
     private:
         /* private data */
-        int hour = 0;
-        bool increment = true;
+        int hour = 11;
+        bool increment = false;
     public:
         /* public functionality */
         ~LightCycle();
