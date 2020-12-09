@@ -27,9 +27,6 @@ int main() {
 	//construct mapData class and point adress to global pointer
 	static MapData mapData;
 	g_mapData = &mapData;
-	//construct camera class and point adress to global pointer
-	static Camera camera(1024, 1024);
-	g_camera = &camera;
     //branch if GLFW isn't initialized and kill the application
 	if(!glfwInit()) {
 		std::cerr << "GLFW initialization failed.\n";
@@ -44,10 +41,13 @@ int main() {
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	//create window
-	GLFWwindow* window = glfwCreateWindow(1024, 1024, "Landscape", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(1920, 1080, "Landscape", nullptr, nullptr);
 	//set framebuffer size data
 	int framebufferWidth = 0, framebufferHeight = 0;
 	glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+	//construct camera class and point adress to global pointer
+	static Camera camera(framebufferWidth, framebufferHeight);
+	g_camera = &camera;
 	//declare framebuffer size callback
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	//setting the OpenGL context to the window

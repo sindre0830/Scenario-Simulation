@@ -18,7 +18,7 @@ Camera::~Camera() {}
  */
 Camera::Camera(const int width, const int height) {
 	//set projection matrix
-	projectionMatrix = glm::perspective(glm::radians(60.f), static_cast<float>(width) / height, 0.01f, 1000.f);
+	updateProjection(width, height);
 	//set initial third person position
 	g_mapData->thirdPersonPos = glm::vec3(0.f, 3.f, 0.f);
     //set initial view matrix values
@@ -78,6 +78,7 @@ void Camera::updateDirection(double xpos, double ypos) {
 	viewMatrix = glm::lookAt(camPos, camPos + camFront, camUp);
 }
 
-void Camera::switchCamMode() {
-
+void Camera::updateProjection(const int width, const int height) {
+	//set projection matrix
+	projectionMatrix = glm::perspective(glm::radians(60.f), static_cast<float>(width) / height, 0.01f, 1000.f);
 }

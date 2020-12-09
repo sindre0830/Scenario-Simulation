@@ -23,6 +23,6 @@ class Camera {
         Camera(const int width, const int height);
         void updatePosition(GLFWwindow *window, double deltaTime);
         void updateDirection(double xpos, double ypos);
-        void switchCamMode();
+        void updateProjection(const int width, const int height);
 };
 #endif

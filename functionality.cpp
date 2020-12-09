@@ -427,7 +427,7 @@ void destroyVAO(GLuint &VAO) {
  * @param height 
  */
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-    //set difference values
+    /*//set difference values
 	int widthDifference = width - 1024;
 	int heightDifference = height - 1024;
     //set scene size and position according to width and height difference
@@ -449,7 +449,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 		} else if(heightDifference < 0) {
 			glViewport(-(heightDifference / 2), 0, (width + heightDifference), height);
 		}
-	}
+	}*/
+    glViewport(0, 0, width, height);
+    g_camera->updateProjection(width, height);
 }
 /**
  * @brief Eanable capture of debug output.
