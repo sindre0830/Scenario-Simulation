@@ -11,11 +11,12 @@
 class LightCycle {
     private:
         /* private data */
-        int hour = 1;
+        int hour = 0;
+        bool increment = true;
     public:
         /* public functionality */
         ~LightCycle();
         LightCycle();
-        void update();
+        void update(const double deltaTime);
 };
 #endif

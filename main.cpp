@@ -117,7 +117,7 @@ int main() {
 		if(glfwGetTime() - timer > 1.0f) {
 			timer++;
 			//update the light cycle
-			lightCycle.update();
+			lightCycle.update(deltaTime);
 			//set background color according to cycle
 			glClearColor(g_mapData->skyColor.r, g_mapData->skyColor.g, g_mapData->skyColor.b, 1.0f);
 		}
