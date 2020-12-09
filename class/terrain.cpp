@@ -13,8 +13,6 @@
 /* global data */
 extern Camera *g_camera;
 extern MapData* g_mapData;
-//extern std::vector<std::vector<int>> pixelDepth;
-//extern std::map<std::pair<int, int>, std::vector<std::vector<float>>> gridElement;
 
 Terrain::~Terrain() {
     glDeleteProgram(shaderProgram);
@@ -24,17 +22,12 @@ Terrain::~Terrain() {
 }
 
 Terrain::Terrain() {
-    int gridWidth = 200, gridHeight = 200;
-
-    //std::map<std::pair<int, int>, std::vector<std::vector<float>>> gridElement;
-
-
-    //compile scoreboard shader
+    //construct terrain map
     shaderProgram = compileShader(terrainVertexShader, terrainFragmentShader);
     //create VAO
     std::vector<GLfloat> arr;
-    for(int i = 0; i < gridHeight; i++) {
-        for(int j = 0; j < gridWidth; j++) {
+    for(int i = 0; i < g_mapData->gridHeight; i++) {
+        for(int j = 0; j < g_mapData->gridWidth; j++) {
             for(int k = 0; k < 4; k++) {
                 for(int n = 0; n < 8; n++) {
                     arr.push_back(g_mapData->gridElement[std::make_pair(i, j)][k][n]);
@@ -43,31 +36,6 @@ Terrain::Terrain() {
             }
         }
     }
-    /*const float elementWidth = 1 / (float)(gridWidth), textureWidth = 1 / ((float)(gridWidth) / 2.f);
-    int pixelIndexRow = 0, pixelIndexCol = 0;
-    for(float yPos = -1.f, yTex = 0.f; yPos <= 1.f; yPos += elementWidth, yTex += textureWidth) {
-        for(float xPos = -1.f, xTex = 0.f; xPos <= 1.f; xPos += elementWidth, xTex += textureWidth) {
-            arr.insert(arr.end(), {
-                //top left
-                xPos, yPos + elementWidth, 10.f / (float)(pixelDepth[pixelIndexCol][pixelIndexRow]),
-                xTex, yTex + textureWidth,
-                //bottom left
-                xPos, yPos, 10.f / (float)(pixelDepth[pixelIndexCol][pixelIndexRow]),
-                xTex, yTex,
-                //bottom right
-                xPos + elementWidth, yPos, 10.f / (float)(pixelDepth[pixelIndexCol + 1][pixelIndexRow]),
-                xTex + textureWidth, yTex,
-                //top right
-                xPos + elementWidth, yPos + elementWidth, 10.f / (float)(pixelDepth[pixelIndexCol + 1][pixelIndexRow + 1]),
-                xTex + textureWidth, yTex + textureWidth
-            });
-            meshAmount++;
-            if(pixelIndexRow + 1 < 541) pixelIndexRow++;
-        }
-        pixelIndexRow = 0;
-        if(pixelIndexCol + 1 < 541) pixelIndexCol++;
-    }*/
-    //std::cout << meshAmount << std::endl;
     VAO = genObject(arr, meshAmount);
     //specify the layout of the vertex data
     glEnableVertexAttribArray(0);
@@ -78,16 +46,13 @@ Terrain::Terrain() {
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (const void*)(5 * sizeof(GLfloat)));
     //set projection matrix uniform
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_projectionMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->projectionMatrix));
-    //rotate world
+    //rotate and scale world
     glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(-1.f, 0.f, 0.f));
-    //modelMatrix = glm::rotate(modelMatrix, glm::radians(90.f), glm::vec3(0.f, 0.f, 1.f));
     modelMatrix = glm::scale(modelMatrix, glm::vec3(2.f));
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_modelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
-    glUseProgram(0);
-
-    //
+    //construct water texture
     waterShaderProgram = compileShader(terrainVertexShader, terrainFragmentShader);
-
+    //create VAO
     arr = genCoordinates();
     waterVAO = genObject(arr, 1);
     //specify the layout of the vertex data
@@ -99,7 +64,7 @@ Terrain::Terrain() {
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (const void*)(5 * sizeof(GLfloat)));
     //set projection matrix uniform
     glUniformMatrix4fv(glGetUniformLocation(waterShaderProgram, "u_projectionMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->projectionMatrix));
-    //rotate world
+    //rotate and scale world
     glUniformMatrix4fv(glGetUniformLocation(waterShaderProgram, "u_modelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
     glUseProgram(0);
 }
@@ -108,16 +73,16 @@ Terrain::Terrain() {
  * 
  */
 void Terrain::draw() {
+    //render terrain map
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
-    //dynamic light direction
     glUniform3fv(glGetUniformLocation(shaderProgram, "u_lightDirection"), 1, glm::value_ptr(g_mapData->lightDirection));
     glUniform3fv(glGetUniformLocation(shaderProgram, "u_lightColor"), 1, glm::value_ptr(g_mapData->lightColor));
     glUniform1i(glGetUniformLocation(shaderProgram, "u_texture"), TERRAIN_TEXTURE);
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_projectionMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->projectionMatrix));
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_viewMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->viewMatrix));
     glDrawElements(GL_TRIANGLES, (6 * meshAmount), GL_UNSIGNED_INT, (const void*)0);
-
+    //render water texture
     glUseProgram(waterShaderProgram);
     glBindVertexArray(waterVAO);
     glUniform3fv(glGetUniformLocation(waterShaderProgram, "u_lightDirection"), 1, glm::value_ptr(g_mapData->lightDirection));
@@ -126,11 +91,11 @@ void Terrain::draw() {
     glUniformMatrix4fv(glGetUniformLocation(waterShaderProgram, "u_projectionMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->projectionMatrix));
     glUniformMatrix4fv(glGetUniformLocation(waterShaderProgram, "u_viewMatrix"), 1, GL_FALSE, glm::value_ptr(g_camera->viewMatrix));
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (const void*)0);
-    
     glUseProgram(0);
 }
 
 std::vector<GLfloat> Terrain::genCoordinates() {
+    //creates full scale 2D rectangle
     std::vector<GLfloat> arr = {
         //top left grid, texture and normal coordinates
         -1.f, 1.f, 30.f / 255.f,
