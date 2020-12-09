@@ -132,6 +132,7 @@ int main() {
 	//clear memory before ending program
 	glUseProgram(0);
 	glDeleteTextures(1, &terrainTex);
+	glDeleteTextures(1, &waterTex);
 	glfwTerminate();
 	return EXIT_SUCCESS;
 }
