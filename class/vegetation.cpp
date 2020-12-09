@@ -20,6 +20,13 @@ Vegetation::~Vegetation() {
 }
 
 Vegetation::Vegetation() {
+    //fill in possible paths with true, this will be updated when getting each instance
+    for(int i = 0; i < g_mapData->gridHeight; i++) {
+        for(int j = 0; j < g_mapData->gridWidth; j++) {
+            g_mapData->obstaclesInGridElement[i][j] = true;
+        }
+    }
+    //construct vegetation entity
     shaderProgram = compileShader(modelVertexShader, modelFragmentShader);
 	glUseProgram(shaderProgram);
     VAO = loadModel("Objects/PineTrees_LowPoly/", "pine_tree_model.obj", meshAmount);
@@ -41,11 +48,8 @@ Vegetation::Vegetation() {
     int index = 0;
     for(int i = 0; i < g_mapData->gridHeight; i += 5) {
         for(int j = 0; j < g_mapData->gridWidth; j += 5) {
+            //branch if depth is between 42 and 79 (in green area)
             if(g_mapData->gridElement[std::make_pair(i, j)][0][2] > 42 / 255.f && g_mapData->gridElement[std::make_pair(i, j)][0][2] < 79 / 255.f) {
-                /*for(int n = 0; n < 3; n++) {
-                    arrTestBuffer.push_back(g_mapData->gridElement[std::make_pair(i, j)][0][n]);
-                }*/
-                //arrTest.push_back(arrTestBuffer);
                 glm::vec3 translation;
                 //multiply the value by 100 to compensate for the tree scaling(0.01f * 100.f = 1), then multiply by 2 because of the terrain scalling
                 translation.x = g_mapData->gridElement[std::make_pair(i, j)][0][0] * (100.f * 2.f);
@@ -53,28 +57,17 @@ Vegetation::Vegetation() {
                 translation.z = g_mapData->gridElement[std::make_pair(i, j)][0][2] * (100.f * 2.f);
                 translations[index] = translation;
                 index++;
+                //remember initial position to compute coalition when moving
+                g_mapData->obstaclesInGridElement[i][j] = false;
             }
         }
     }
-    //std::cout << index << std::endl;
-
-    /*glm::vec3 translation;
-    translation.x = g_mapData->gridElement[std::make_pair(0, 0)][0][0] * 200.f;
-    translation.y = g_mapData->gridElement[std::make_pair(0, 0)][0][1] * 20.f;
-    translation.z = g_mapData->gridElement[std::make_pair(0, 0)][0][2] * 200.f;
-    translations[0] = translation;
-    
-    translation.x = g_mapData->gridElement[std::make_pair(199, 199)][0][0] * 200.f;
-    translation.y = g_mapData->gridElement[std::make_pair(199, 199)][0][1] * 20.f;
-    translation.z = g_mapData->gridElement[std::make_pair(199, 199)][0][2] * 200.f;
-    translations[1] = translation;*/
-
+    //send initial position to uniform
     for(unsigned int i = 0; i < 600; i++) {
         std::string strBuffer = "offsets[" + std::to_string(i) + "]";
         const char *c_str = strBuffer.c_str();
         glUniform3fv(glGetUniformLocation(shaderProgram, c_str), 1, glm::value_ptr(translations[i]));
     } 
-
     glUseProgram(0);
 }
 

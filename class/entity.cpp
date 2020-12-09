@@ -138,10 +138,22 @@ void Entity::mov() {
     glUseProgram(aerielShaderProgram);
     for(unsigned int i = 0; i < aerialInstanceIndex; i++) {
         bool
-            pathNorth = aerialGridPosition[i][COLUMN] + 1 < g_mapData->gridHeight && aerialGridPossiblePath[aerialGridPosition[i][COLUMN] + 1][aerialGridPosition[i][ROW]],
-            pathWest = aerialGridPosition[i][ROW] - 1 >= 0 && aerialGridPossiblePath[aerialGridPosition[i][COLUMN]][aerialGridPosition[i][ROW] - 1],
-            pathSouth = aerialGridPosition[i][COLUMN] - 1 >= 0 && aerialGridPossiblePath[aerialGridPosition[i][COLUMN] - 1][aerialGridPosition[i][ROW]],
-            pathEast = aerialGridPosition[i][ROW] + 1 < g_mapData->gridWidth && aerialGridPossiblePath[aerialGridPosition[i][COLUMN]][aerialGridPosition[i][ROW] + 1];
+            pathNorth = 
+                aerialGridPosition[i][COLUMN] + 1 < g_mapData->gridHeight && 
+                aerialGridPossiblePath[aerialGridPosition[i][COLUMN] + 1][aerialGridPosition[i][ROW]] && 
+                g_mapData->obstaclesInGridElement[aerialGridPosition[i][COLUMN] + 1][aerialGridPosition[i][ROW]],
+            pathWest = 
+                aerialGridPosition[i][ROW] - 1 >= 0 && 
+                aerialGridPossiblePath[aerialGridPosition[i][COLUMN]][aerialGridPosition[i][ROW] - 1] && 
+                g_mapData->obstaclesInGridElement[aerialGridPosition[i][COLUMN]][aerialGridPosition[i][ROW] - 1],
+            pathSouth = 
+                aerialGridPosition[i][COLUMN] - 1 >= 0 && 
+                aerialGridPossiblePath[aerialGridPosition[i][COLUMN] - 1][aerialGridPosition[i][ROW]] && 
+                g_mapData->obstaclesInGridElement[aerialGridPosition[i][COLUMN] - 1][aerialGridPosition[i][ROW]],
+            pathEast = 
+                aerialGridPosition[i][ROW] + 1 < g_mapData->gridWidth && 
+                aerialGridPossiblePath[aerialGridPosition[i][COLUMN]][aerialGridPosition[i][ROW] + 1] && 
+                g_mapData->obstaclesInGridElement[aerialGridPosition[i][COLUMN]][aerialGridPosition[i][ROW] + 1];
         //branch if the entity can't move in the same path as before
         if(!((aerialLastDirection[i] == NORTH && pathNorth) || (aerialLastDirection[i] == WEST && pathWest) || (aerialLastDirection[i] == SOUTH && pathSouth) || (aerialLastDirection[i] == EAST && pathEast))) {
             //get a random possible path
@@ -177,10 +189,18 @@ void Entity::mov() {
     glUseProgram(groundShaderProgram);
     for(unsigned int i = 0; i < groundInstanceIndex; i++) {
         bool
-            pathNorth = groundGridPosition[i][COLUMN] + 1 < g_mapData->gridHeight && groundGridPossiblePath[groundGridPosition[i][COLUMN] + 1][groundGridPosition[i][ROW]],
-            pathWest = groundGridPosition[i][ROW] - 1 >= 0 && groundGridPossiblePath[groundGridPosition[i][COLUMN]][groundGridPosition[i][ROW] - 1],
-            pathSouth = groundGridPosition[i][COLUMN] - 1 >= 0 && groundGridPossiblePath[groundGridPosition[i][COLUMN] - 1][groundGridPosition[i][ROW]],
-            pathEast = groundGridPosition[i][ROW] + 1 < g_mapData->gridWidth && groundGridPossiblePath[groundGridPosition[i][COLUMN]][groundGridPosition[i][ROW] + 1];
+            pathNorth = 
+                groundGridPosition[i][COLUMN] + 1 < g_mapData->gridHeight && 
+                groundGridPossiblePath[groundGridPosition[i][COLUMN] + 1][groundGridPosition[i][ROW]],
+            pathWest = 
+                groundGridPosition[i][ROW] - 1 >= 0 && 
+                groundGridPossiblePath[groundGridPosition[i][COLUMN]][groundGridPosition[i][ROW] - 1],
+            pathSouth = 
+                groundGridPosition[i][COLUMN] - 1 >= 0 && 
+                groundGridPossiblePath[groundGridPosition[i][COLUMN] - 1][groundGridPosition[i][ROW]],
+            pathEast = 
+                groundGridPosition[i][ROW] + 1 < g_mapData->gridWidth && 
+                groundGridPossiblePath[groundGridPosition[i][COLUMN]][groundGridPosition[i][ROW] + 1];
         //branch if the entity can't move in the same path as before
         if(!((groundLastDirection[i] == NORTH && pathNorth) || (groundLastDirection[i] == WEST && pathWest) || (groundLastDirection[i] == SOUTH && pathSouth) || (groundLastDirection[i] == EAST && pathEast))) {
             //get a random possible path
